@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cuadriculando</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <section class="screen" id="s1">
+    <div class="dot dot-verde"    id="h1"></div>
+    <div class="dot dot-amarillo" id="h2"></div>
+    <div class="dot dot-azul"     id="h3"></div>
+    <div class="dot dot-rojo"     id="h4"></div>
+    <div class="dot dot-rojo"     id="h5"></div>
+    <div class="dot dot-azul"     id="h6"></div>
+    <div class="dot dot-amarillo" id="h7"></div>
+    <div class="dot dot-verde"    id="h8"></div>
+    <h1 class="t-title" id="hero-title" style="position:absolute;z-index:2;text-align:center;">
+      <span id="lc">C</span>UADRI<span id="lcu">C</span>ULA<span id="ln">N</span>DO
+    </h1>
+
+    <div id="sq1" class="hero-sq sq-verde"></div>
+    <div id="sq2" class="hero-sq sq-amarillo"></div>
+    <div id="sq3" class="hero-sq sq-azul"></div>
+    <div id="sq4" class="hero-sq sq-rojo"></div>
+    <div class="scroll-hint">
+      <span>scroll</span>
+      <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+        <path d="M1 1L7 8L13 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </section>
+
+  <section class="screen" id="s2">
+    <p class="t-body bg-black" id="desc1" style="position:absolute;z-index:2;">Cuadriculando es un juego de estrategia que consiste en sabotear a tus compañeros para ser el ganador.</p>
+    <p id="desc2" class="t-body text-right">El primer jugador en completar su cuadrícula gana la partida.</p>
+    <p class="t-body bg-black" id="desc3" style="position:absolute;z-index:2;">Para ganar el juego, se requiere concentración, estrategia y buenas decisiones.</p>
+    <div class="dot dot-rojo"     id="d1"></div>
+    <div class="dot dot-verde"    id="d2"></div>
+    <div class="dot dot-azul"     id="d3"></div>
+    <div class="dot dot-amarillo" id="d4"></div>
+    <div class="dot dot-rojo"     id="d5"></div>
+    <div class="dot dot-amarillo" id="d6"></div>
+    <div class="dot dot-verde"    id="d7"></div>
+    <div class="dot dot-azul"     id="d8"></div>
+  </section>
+
+  <section class="screen" id="s3">
+    <h2 class="t-title" id="cuad-title" style="position:absolute;z-index:3;">CUADRICULA</h2>
+    <div class="cuad-block" data-col="3" data-row="1" data-color="azul"></div>
+    <div class="cuad-block" data-col="0" data-row="2" data-color="verde"></div>
+    <div class="cuad-block" data-col="1" data-row="1" data-color="amarillo"></div>
+    <div class="cuad-block" data-col="2" data-row="2" data-color="rojo"></div>
+    <p class="t-body cuad-text" data-col="3" data-row="1">Los cuadros deben mantenerse en secreto para los demás jugadores.</p>
+    <p class="t-body cuad-text" data-col="0" data-row="2">En tu turno, puedes cuadrar las veces que quieras siempre que tengas los puntos.</p>
+    <p class="t-body cuad-text" data-col="1" data-row="1">A medida que avanzas, puedes colocar cuadros en la cuadrícula ubicada debajo del tablero.</p>
+    <p class="t-body cuad-text" data-col="2" data-row="2">Cada vez que cuadricules, muestra tus cartas de puntajes a los jugadores para confirmar que estás pagando lo que corresponde.</p>
+  </section>
+
+  <section class="screen" id="s4">
+    <h2 class="t-title" id="descifra-title" style="position:absolute;z-index:3;">DESCIFRA</h2>
+    <div class="cuad-block" data-col="0" data-row="0" data-color="azul"></div>
+    <div class="cuad-block" data-col="2" data-row="1" data-color="amarillo"></div>
+    <div class="cuad-block" data-col="1" data-row="2" data-color="rojo"></div>
+    <div class="cuad-block" data-col="3" data-row="2" data-color="verde"></div>
+    <p class="t-body cuad-text" data-col="0" data-row="0">Nada está completamente a la vista. En cada partida puedes intentar descubrir y revelar donde han cuadrado los demás jugadores.</p>
+    <p class="t-body cuad-text" data-col="2" data-row="1">A medida que avanzas, nuevas cartas de puntaje y especiales aparecen. Algunas pueden ayudarte a revelar.</p>
+    <p class="t-body cuad-text" data-col="1" data-row="2">Descifrar el tablero, observar las acciones de los demás jugadores y descubrir qué se esconde tras cada jugada son las claves para alcanzar la victoria.</p>
+    <p class="t-body cuad-text" data-col="3" data-row="2">Cada decisión puede cambiar el rumbo del juego. Lo que parece una ventaja puede transformarse en un obstáculo.</p>
+  </section>
+
+  <section class="screen" id="s5">
+    <h2 class="t-title" id="ataca-title" style="position:absolute;z-index:3;">ATACA</h2>
+    <div class="cuad-block" data-col="2" data-row="0" data-color="amarillo"></div>
+    <div class="cuad-block" data-col="1" data-row="1" data-color="rojo"></div>
+    <div class="cuad-block" data-col="3" data-row="1" data-color="verde"></div>
+    <div class="cuad-block" data-col="0" data-row="2" data-color="azul"></div>
+    <p class="t-body cuad-text" data-col="2" data-row="0">¡Ataca a tus oponentes! Usa tus cartas para sabotear su estrategia y retrasar su progreso.</p>
+    <p class="t-body cuad-text" data-col="1" data-row="1">La ofensiva es clave. No dejes que los demás completen su cuadrícula antes que tú.</p>
+    <p class="t-body cuad-text" data-col="3" data-row="1">Elige bien el momento. Un ataque bien ejecutado puede cambiar el rumbo de la partida.</p>
+    <p class="t-body cuad-text" data-col="0" data-row="2">Mantén la presión. Sabotear a tus compañeros es parte esencial del juego para ganar.</p>
+  </section>
+
+  <section class="screen" id="s6">
+    <h2 class="t-title interactive-title" id="s6-title">
+      <span class="text-default">PRUEBA LA EXPERIENCIA</span>
+      <span class="text-hover">NO TE CONFIES</span>
+    </h2>
+    <div class="title-arrow" id="s6-arrow">→</div>
+    <div id="f1" class="dot dot-verde"></div>
+    <div id="f2" class="dot dot-amarillo"></div>
+    <div id="f3" class="dot dot-azul"></div>
+    <div id="f4" class="dot dot-rojo"></div>
+    <div id="f5" class="dot dot-verde"></div>
+    <div id="f6" class="dot dot-amarillo"></div>
+    <div id="f7" class="dot dot-azul"></div>
+    <div id="f8" class="dot dot-rojo"></div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
