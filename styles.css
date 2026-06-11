@@ -7,6 +7,8 @@
   font-style: normal;
 }
 
+
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -20,12 +22,15 @@
   --rojo:     #d23434;
 }
 
+
+
 html {
   background: #000;
   color: #fff;
   overflow-x: hidden;
   scroll-behavior: smooth;
 }
+
 
 body {
   margin: 0;
@@ -175,3 +180,12 @@ body {
 .sq-amarillo { background: #f0cf3c; }
 .sq-azul     { background: #3c6ed4; }
 .sq-rojo     { background: #d23434; }
+
+#grid-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+

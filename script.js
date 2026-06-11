@@ -58,20 +58,27 @@ function layout() {
   const offY = Math.floor((vh - gridH) / 2);
 
   const lc = 'rgba(255,255,255,0.30)', lw = 1.5;
-  let svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${gridW}' height='${gridH}'>`;
-  svg += `<rect x="0.75" y="0.75" width="${gridW-1.5}" height="${gridH-1.5}" fill="none" stroke="${lc}" stroke-width="${lw}"/>`;
-  for (let c=1; c<COLS; c++) svg += `<line x1="${c*cell}" y1="0" x2="${c*cell}" y2="${gridH}" stroke="${lc}" stroke-width="${lw}"/>`;
-  for (let r=1; r<ROWS; r++) svg += `<line x1="0" y1="${r*cell}" x2="${gridW}" y2="${r*cell}" stroke="${lc}" stroke-width="${lw}"/>`;
-  svg += `</svg>`;
+  const svgW = document.documentElement.scrollWidth;
+const leftExtra  = offX; // cuánto sobra a la izquierda
+const rightExtra = vw - (offX + gridW); // cuánto sobra a la derecha
+
+let svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${svgW}' height='${gridH}'>`;
+svg += `<line x1="0" y1="0.75" x2="${svgW}" y2="0.75" stroke="${lc}" stroke-width="${lw}"/>`;
+svg += `<line x1="0" y1="${gridH-0.75}" x2="${svgW}" y2="${gridH-0.75}" stroke="${lc}" stroke-width="${lw}"/>`;
+svg += `<line x1="0.75" y1="0" x2="0.75" y2="${gridH}" stroke="${lc}" stroke-width="${lw}"/>`;
+svg += `<line x1="${svgW-0.75}" y1="0" x2="${svgW-0.75}" y2="${gridH}" stroke="${lc}" stroke-width="${lw}"/>`;
+for (let c=1; c<COLS; c++) svg += `<line x1="${offX + c*cell}" y1="0" x2="${offX + c*cell}" y2="${gridH}" stroke="${lc}" stroke-width="${lw}"/>`;
+for (let r=1; r<ROWS; r++) svg += `<line x1="0" y1="${r*cell}" x2="${svgW}" y2="${r*cell}" stroke="${lc}" stroke-width="${lw}"/>`;
+svg += `</svg>`;
 
   const svgUrl = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 
-  document.querySelectorAll('.screen').forEach(screen => {
-    screen.style.backgroundImage    = svgUrl;
-    screen.style.backgroundRepeat   = 'no-repeat';
-    screen.style.backgroundPosition = `${offX}px ${offY}px`;
-    screen.style.backgroundSize     = `${gridW}px ${gridH}px`;
-  });
+// REEMPLAZA POR esto:
+const gridOverlay = document.getElementById('grid-overlay');
+gridOverlay.style.backgroundImage    = svgUrl;
+gridOverlay.style.backgroundRepeat   = 'repeat-y';
+gridOverlay.style.backgroundPosition = `0px ${offY}px`;
+gridOverlay.style.backgroundSize     = `${svgW}px ${gridH}px`;
 
   function cx(col) { return offX + col * cell; }
   function cy(row) { return offY + row * cell; }
@@ -128,6 +135,7 @@ if (sq4) {
   sq4.style.left   = Math.floor(offX + gridW * 0.800) + 'px';
   sq4.style.top    = Math.floor(titleTop + titleH * 0.11) + 'px';
 }
+
 
   HERO_DOTS.forEach(({id, col, row, ox, oy}) => {
     const el = document.getElementById(id);
@@ -215,6 +223,11 @@ if (sq4) {
     el.style.height = dotSz + 'px';
   });
 
+// ── Separadores ──
+document.querySelectorAll('.sep-row').forEach(sep => {
+  sep.style.height = cell + 'px';
+});
+
   updateBlocks('s3', scrollProgressS3);
   updateBlocks('s4', scrollProgressS4);
   updateBlocks('s5', scrollProgressS5);
@@ -280,3 +293,4 @@ window.addEventListener('wheel', (e) => {
 
 layout();
 window.addEventListener('resize', layout);
+
