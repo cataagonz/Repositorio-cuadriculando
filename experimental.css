@@ -1,0 +1,112 @@
+:root {
+  --bg: #000;
+  --grid: rgba(255, 255, 255, 0.78);
+  --tile: #f4f4f4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  cursor: ew-resize;
+}
+
+/* Sección única pantalla completa */
+#s-experimental {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  overflow: hidden;
+  user-select: none;
+  touch-action: none;
+}
+
+/* cuadrícula 4x4 */
+.tablero-grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  border-top: 1px solid var(--grid);
+  border-left: 1px solid var(--grid);
+}
+
+.tablero-cell {
+  position: relative;
+  border-right: 1px solid var(--grid);
+  border-bottom: 1px solid var(--grid);
+  background: #000;
+  overflow: hidden;
+}
+
+.tablero-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--tile);
+  opacity: 0;
+  transform: scale(0.94);
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
+}
+
+.tablero-cell.on .tablero-fill {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.tablero-cell.cut .tablero-fill {
+  background: #000;
+}
+
+/* notch negro arriba */
+.tablero-notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(13vw, 130px);
+  height: min(2.4vw, 26px);
+  background: #000;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  z-index: 5;
+}
+
+.tablero-instruction {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  z-index: 6;
+  transition: opacity 0.25s ease;
+}
+
+.tablero-instruction.hidden {
+  opacity: 0;
+}
+
+@media (max-width: 900px) {
+  .tablero-instruction {
+    font-size: 10px;
+    bottom: 18px;
+  }
+}

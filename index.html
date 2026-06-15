@@ -4,138 +4,345 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cuadriculando</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Inter:wght@400;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-<div id="grid-overlay"></div>
+
+<nav class="side-index" aria-label="Índice de secciones">
+  <a href="#s1" class="side-index__btn c-verde" aria-label="Inicio"></a>
+  <a href="#s2" class="side-index__btn c-amarillo" aria-label="Reglas"></a>
+  <a href="#s3" class="side-index__btn c-azul" aria-label="Galería"></a>
+  <a href="#s4" class="side-index__btn c-rojo" aria-label="Experiencia"></a>
+  <a href="#s5" class="side-index__btn c-verde" aria-label="Créditos"></a>
+  <a href="#s-gallery" class="side-index__btn c-amarillo" aria-label="Galería extendida"></a>
+  <a href="#s7" class="side-index__btn c-azul" aria-label="Experiencia 2"></a>
+  <a href="#s6" class="side-index__btn c-rojo" aria-label="Créditos finales"></a>
+</nav>
+
+  <div id="grid-overlay" aria-hidden="true"></div>
+  <div id="cursor-sq" aria-hidden="true"></div>
+
+  <main>
+    <section class="screen" id="s1">
+      <div class="dot dot-verde" id="h1"></div>
+      <div class="dot dot-amarillo" id="h2"></div>
+      <div class="dot dot-azul" id="h3"></div>
+      <div class="dot dot-rojo" id="h4"></div>
+      <div class="dot dot-rojo" id="h5"></div>
+      <div class="dot dot-azul" id="h6"></div>
+      <div class="dot dot-amarillo" id="h7"></div>
+      <div class="dot dot-verde" id="h8"></div>
+
+      <h1 class="t-title hero-title" id="hero-title">
+        <span class="hero-letter hover-verde" id="lc">C</span>
+        <span class="hero-letter hover-amarillo">U</span>
+        <span class="hero-letter hover-azul">A</span>
+        <span class="hero-letter hover-rojo">D</span>
+        <span class="hero-letter hover-amarillo" id="lr">R</span>
+        <span class="hero-letter hover-verde" id="li">I</span>
+        <span class="hero-letter hover-rojo" id="lcu">C</span>
+        <span class="hero-letter hover-azul">U</span>
+        <span class="hero-letter hover-verde">L</span>
+        <span class="hero-letter hover-amarillo">A</span>
+        <span class="hero-letter hover-rojo" id="ln">N</span>
+        <span class="hero-letter hover-azul">D</span>
+        <span class="hero-letter hover-verde">O</span>
+      </h1>
+
+      <div id="sq1" class="hero-sq sq-verde"></div>
+      <div id="sq2" class="hero-sq sq-amarillo"></div>
+      <div id="sq3" class="hero-sq sq-azul"></div>
+      <div id="sq4" class="hero-sq sq-rojo"></div>
 
 
-  <section class="screen" id="s1">
-    <div class="dot dot-verde"    id="h1"></div>
-    <div class="dot dot-amarillo" id="h2"></div>
-    <div class="dot dot-azul"     id="h3"></div>
-    <div class="dot dot-rojo"     id="h4"></div>
-    <div class="dot dot-rojo"     id="h5"></div>
-    <div class="dot dot-azul"     id="h6"></div>
-    <div class="dot dot-amarillo" id="h7"></div>
-    <div class="dot dot-verde"    id="h8"></div>
-    <h1 class="t-title" id="hero-title" style="position:absolute;z-index:2;text-align:center;">
-      <span id="lc">C</span>UADRI<span id="lcu">C</span>ULA<span id="ln">N</span>DO
-    </h1>
-
-    <div id="sq1" class="hero-sq sq-verde"></div>
-    <div id="sq2" class="hero-sq sq-amarillo"></div>
-    <div id="sq3" class="hero-sq sq-azul"></div>
-    <div id="sq4" class="hero-sq sq-rojo"></div>
-    <div class="scroll-hint">
-      <span>scroll</span>
-      <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
-        <path d="M1 1L7 8L13 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+      <div class="scroll-hint">
+        <span>scroll</span>
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true">
+          <path d="M1 1L7 8L13 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+    </section>
+    
+  <div class="colophon-inner">
+    <p class="colophon-kicker">CUADRICULA, DESCIFRA Y ATACA</p>
     </div>
-  </section>
 
 
-  </section>
-<div class="sep-row"></div>
-<section class="screen" id="s2">
+    <div class="sep-row">
+      <span class="sep-dot dot-verde"></span>
+      <span class="sep-dot dot-amarillo"></span>
+      <span class="sep-dot dot-azul"></span>
+      <span class="sep-dot dot-rojo"></span>
+    </div>
 
+    <section class="screen" id="s2">
+      <p class="t-body bg-black" id="desc1">
+        Cuadriculando es un juego de estrategia que consiste en sabotear a tus compañeros para ser el ganador.
+      </p>
+      <p class="t-body" id="desc2">
+        El primer jugador en completar su cuadrícula gana la partida.
+      </p>
+      <p class="t-body bg-black" id="desc3">
+        Para ganar el juego, se requiere concentración, estrategia y buenas decisiones.
+      </p>
 
+      <div class="dot dot-rojo" id="d1"></div>
+      <div class="dot dot-verde" id="d2"></div>
+      <div class="dot dot-azul" id="d3"></div>
+      <div class="dot dot-amarillo" id="d4"></div>
+      <div class="dot dot-rojo" id="d5"></div>
+      <div class="dot dot-amarillo" id="d6"></div>
+      <div class="dot dot-verde" id="d7"></div>
+      <div class="dot dot-azul" id="d8"></div>
+    </section>
 
-  <section class="screen" id="s2">
-    <p class="t-body bg-black" id="desc1" style="position:absolute;z-index:2;">Cuadriculando es un juego de estrategia que consiste en sabotear a tus compañeros para ser el ganador.</p>
-    <p id="desc2" class="t-body text-right">El primer jugador en completar su cuadrícula gana la partida.</p>
-    <p class="t-body bg-black" id="desc3" style="position:absolute;z-index:2;">Para ganar el juego, se requiere concentración, estrategia y buenas decisiones.</p>
-    <div class="dot dot-rojo"     id="d1"></div>
-    <div class="dot dot-verde"    id="d2"></div>
-    <div class="dot dot-azul"     id="d3"></div>
-    <div class="dot dot-amarillo" id="d4"></div>
-    <div class="dot dot-rojo"     id="d5"></div>
-    <div class="dot dot-amarillo" id="d6"></div>
-    <div class="dot dot-verde"    id="d7"></div>
-    <div class="dot dot-azul"     id="d8"></div>
-  </section>
+    <div class="sep-row">
+      <span class="sep-dot dot-verde"></span>
+      <span class="sep-dot dot-amarillo"></span>
+      <span class="sep-dot dot-azul"></span>
+      <span class="sep-dot dot-rojo"></span>
+    </div>
 
+    <section class="screen section-blocks" id="s3">
+      <h2 class="t-title section-title" id="cuad-title">CUADRÍCULA</h2>
 
-  </section>
-<div class="sep-row"></div>
-<section class="screen" id="s2">
+      <div class="cuad-block" data-col="3" data-row="1" data-color="azul"></div>
+      <div class="cuad-block" data-col="0" data-row="2" data-color="verde"></div>
+      <div class="cuad-block" data-col="1" data-row="1" data-color="amarillo"></div>
+      <div class="cuad-block" data-col="2" data-row="2" data-color="rojo"></div>
 
+      <p class="t-body cuad-text" data-col="3" data-row="1">
+        Los cuadros deben mantenerse en secreto para los demás jugadores.
+      </p>
+      <p class="t-body cuad-text" data-col="0" data-row="2">
+        En tu turno, puedes cuadrar las veces que quieras siempre que tengas los puntos.
+      </p>
+      <p class="t-body cuad-text" data-col="1" data-row="1">
+        A medida que avanzas, puedes colocar cuadros en la cuadrícula ubicada debajo del tablero.
+      </p>
+      <p class="t-body cuad-text" data-col="2" data-row="2">
+        Cada vez que cuadricules, muestra tus cartas de puntajes a los jugadores para confirmar que estás pagando lo que corresponde.
+      </p>
+    </section>
 
+    <div class="sep-row">
+      <span class="sep-dot dot-verde"></span>
+      <span class="sep-dot dot-amarillo"></span>
+      <span class="sep-dot dot-azul"></span>
+      <span class="sep-dot dot-rojo"></span>
+    </div>
 
-  <section class="screen" id="s3">
-    <h2 class="t-title" id="cuad-title" style="position:absolute;z-index:3;">CUADRICULA</h2>
-    <div class="cuad-block" data-col="3" data-row="1" data-color="azul"></div>
-    <div class="cuad-block" data-col="0" data-row="2" data-color="verde"></div>
-    <div class="cuad-block" data-col="1" data-row="1" data-color="amarillo"></div>
-    <div class="cuad-block" data-col="2" data-row="2" data-color="rojo"></div>
-    <p class="t-body cuad-text" data-col="3" data-row="1">Los cuadros deben mantenerse en secreto para los demás jugadores.</p>
-    <p class="t-body cuad-text" data-col="0" data-row="2">En tu turno, puedes cuadrar las veces que quieras siempre que tengas los puntos.</p>
-    <p class="t-body cuad-text" data-col="1" data-row="1">A medida que avanzas, puedes colocar cuadros en la cuadrícula ubicada debajo del tablero.</p>
-    <p class="t-body cuad-text" data-col="2" data-row="2">Cada vez que cuadricules, muestra tus cartas de puntajes a los jugadores para confirmar que estás pagando lo que corresponde.</p>
-  </section>
+    <section class="screen section-blocks" id="s4">
+      <h2 class="t-title section-title" id="descifra-title">DESCIFRA</h2>
 
+      <div class="cuad-block" data-col="0" data-row="0" data-color="azul"></div>
+      <div class="cuad-block" data-col="2" data-row="1" data-color="amarillo"></div>
+      <div class="cuad-block" data-col="1" data-row="2" data-color="rojo"></div>
+      <div class="cuad-block" data-col="3" data-row="2" data-color="verde"></div>
 
-  </section>
-<div class="sep-row"></div>
-<section class="screen" id="s2">
+      <p class="t-body cuad-text" data-col="0" data-row="0">
+        Nada está completamente a la vista. En cada partida puedes intentar descubrir y revelar dónde han cuadrado los demás jugadores.
+      </p>
+      <p class="t-body cuad-text" data-col="2" data-row="1">
+        A medida que avanzas, nuevas cartas de puntaje y especiales aparecen. Algunas pueden ayudarte a revelar.
+      </p>
+      <p class="t-body cuad-text" data-col="1" data-row="2">
+        Descifrar el tablero, observar las acciones de los demás jugadores y descubrir qué se esconde tras cada jugada son las claves para alcanzar la victoria.
+      </p>
+      <p class="t-body cuad-text" data-col="3" data-row="2">
+        Cada decisión puede cambiar el rumbo del juego. Lo que parece una ventaja puede transformarse en un obstáculo.
+      </p>
+    </section>
 
+    <div class="sep-row">
+      <span class="sep-dot dot-verde"></span>
+      <span class="sep-dot dot-amarillo"></span>
+      <span class="sep-dot dot-azul"></span>
+      <span class="sep-dot dot-rojo"></span>
+    </div>
 
+    <section class="screen section-blocks" id="s5">
+      <h2 class="t-title section-title" id="ataca-title">ATACA</h2>
 
+      <div class="cuad-block" data-col="2" data-row="0" data-color="amarillo"></div>
+      <div class="cuad-block" data-col="1" data-row="1" data-color="rojo"></div>
+      <div class="cuad-block" data-col="3" data-row="1" data-color="verde"></div>
+      <div class="cuad-block" data-col="0" data-row="2" data-color="azul"></div>
 
-  <section class="screen" id="s4">
-    <h2 class="t-title" id="descifra-title" style="position:absolute;z-index:3;">DESCIFRA</h2>
-    <div class="cuad-block" data-col="0" data-row="0" data-color="azul"></div>
-    <div class="cuad-block" data-col="2" data-row="1" data-color="amarillo"></div>
-    <div class="cuad-block" data-col="1" data-row="2" data-color="rojo"></div>
-    <div class="cuad-block" data-col="3" data-row="2" data-color="verde"></div>
-    <p class="t-body cuad-text" data-col="0" data-row="0">Nada está completamente a la vista. En cada partida puedes intentar descubrir y revelar donde han cuadrado los demás jugadores.</p>
-    <p class="t-body cuad-text" data-col="2" data-row="1">A medida que avanzas, nuevas cartas de puntaje y especiales aparecen. Algunas pueden ayudarte a revelar.</p>
-    <p class="t-body cuad-text" data-col="1" data-row="2">Descifrar el tablero, observar las acciones de los demás jugadores y descubrir qué se esconde tras cada jugada son las claves para alcanzar la victoria.</p>
-    <p class="t-body cuad-text" data-col="3" data-row="2">Cada decisión puede cambiar el rumbo del juego. Lo que parece una ventaja puede transformarse en un obstáculo.</p>
-  </section>
+      <p class="t-body cuad-text" data-col="2" data-row="0">
+        ¡Ataca a tus oponentes! Usa tus cartas para sabotear su estrategia y retrasar su progreso.
+      </p>
+      <p class="t-body cuad-text" data-col="1" data-row="1">
+        La ofensiva es clave. No dejes que los demás completen su cuadrícula antes que tú.
+      </p>
+      <p class="t-body cuad-text" data-col="3" data-row="1">
+        Elige bien el momento. Un ataque bien ejecutado puede cambiar el rumbo de la partida.
+      </p>
+      <p class="t-body cuad-text" data-col="0" data-row="2">
+        Mantén la presión. Sabotear a tus compañeros es parte esencial del juego para ganar.
+      </p>
+    </section>
 
-</section>
-<div class="sep-row"></div>
-<section class="screen" id="s2">
+    <div class="sep-row">
+      <span class="sep-dot dot-verde"></span>
+      <span class="sep-dot dot-amarillo"></span>
+      <span class="sep-dot dot-azul"></span>
+      <span class="sep-dot dot-rojo"></span>
+    </div>
 
+    <section class="screen" id="s-gallery" aria-labelledby="gallery-heading">
+      <h2 id="gallery-heading" class="sr-only">Galería de fotos</h2>
 
-  <section class="screen" id="s5">
-    <h2 class="t-title" id="ataca-title" style="position:absolute;z-index:3;">ATACA</h2>
-    <div class="cuad-block" data-col="2" data-row="0" data-color="amarillo"></div>
-    <div class="cuad-block" data-col="1" data-row="1" data-color="rojo"></div>
-    <div class="cuad-block" data-col="3" data-row="1" data-color="verde"></div>
-    <div class="cuad-block" data-col="0" data-row="2" data-color="azul"></div>
-    <p class="t-body cuad-text" data-col="2" data-row="0">¡Ataca a tus oponentes! Usa tus cartas para sabotear su estrategia y retrasar su progreso.</p>
-    <p class="t-body cuad-text" data-col="1" data-row="1">La ofensiva es clave. No dejes que los demás completen su cuadrícula antes que tú.</p>
-    <p class="t-body cuad-text" data-col="3" data-row="1">Elige bien el momento. Un ataque bien ejecutado puede cambiar el rumbo de la partida.</p>
-    <p class="t-body cuad-text" data-col="0" data-row="2">Mantén la presión. Sabotear a tus compañeros es parte esencial del juego para ganar.</p>
-  </section>
+      <div class="gallery-band gallery-band-top">
+        <span class="gallery-band-dot dot-verde"></span>
+        <span class="gallery-band-dot dot-amarillo"></span>
+      </div>
 
+      <div class="carousel-wrap">
+        <button class="gallery-arrow" id="gallery-prev" type="button" aria-label="Foto anterior">←</button>
+        <div class="gallery-track" id="gallery-track" role="region" aria-label="Galería de fotos"></div>
+        <button class="gallery-arrow" id="gallery-next" type="button" aria-label="Foto siguiente">→</button>
+      </div>
 
-</section>
-<div class="sep-row"></div>
-<section class="screen" id="s2">
+      <div class="gallery-band gallery-band-bottom">
+        <span class="gallery-band-dot dot-azul"></span>
+        <span class="gallery-band-dot dot-rojo"></span>
+      </div>
+    </section>
+
   
-  <section class="screen" id="s6">
-    <h2 class="t-title interactive-title" id="s6-title">
-      <span class="text-default">PRUEBA LA EXPERIENCIA</span>
-      <span class="text-hover">NO TE CONFIES</span>
-    </h2>
-    <div class="title-arrow" id="s6-arrow">→</div>
-    <div id="f1" class="dot dot-verde"></div>
-    <div id="f2" class="dot dot-amarillo"></div>
-    <div id="f3" class="dot dot-azul"></div>
-    <div id="f4" class="dot dot-rojo"></div>
-    <div id="f5" class="dot dot-verde"></div>
-    <div id="f6" class="dot dot-amarillo"></div>
-    <div id="f7" class="dot dot-azul"></div>
-    <div id="f8" class="dot dot-rojo"></div>
-  </section>
+    <div class="sep-row">
+  <span class="sep-dot dot-verde"></span>
+  <span class="sep-dot dot-amarillo"></span>
+  <span class="sep-dot dot-azul"></span>
+  <span class="sep-dot dot-rojo"></span>
+</div>
 
-  
+<section class="screen pix-section" id="s-pix">
+  <div class="pix-wrap">
 
-  <script src="script.js"></script>
+    <iframe
+      src="https://eadpucv.github.io/pix/#!/import/eyJ0aXRsZSI6IkV4cGVyaWVuY2lhIGN1YWRyaWN1bGFuZG8iLCJsYXlvdXQiOiJwaXgiLCJkZXNjcmlwdGlvbiI6IkVsIGp1ZWdvIHNlIHJlYWxpemEgY29uIHVuIGdydXBvIGRlIDQgcGVyc29uYXMsIHF1aWVuZXMganVlZ2FuIGNvbiBlbCBvYmpldGl2byBkZSBjb2xvY2FyIHByaW1lcm8gc3VzIDE2IGN1YWRyb3MgZW4gc3UgcHJvcGlhIGN1YWRyw61jdWxhLiIsInNjb3JlcyI6W1t7InN0ZXBfdGl0bGUiOiIiLCJ1c2VyIjoicGl4LWludHJpZ3VlZCDCv0N1w6FudG9zIHB1bnRvcyB0ZW5nbz8iLCJkaWFsb2d1ZSI6InBpeC1zdGFjayBDdWVudGEgZWwgcHVudGFqZSBkZSBzdXMgY2FydGFzLiIsInN5c3RlbSI6InBpeC1maWxlIEFsIGluaWNpYXIgc2UgZW50cmVnYXLDoW4gNSBjYXJ0YXMgZGUgcHVudGFqZSIsIm5vdGUiOiIiLCJlbnZpcm9ubWVudCI6IiIsInN1cHBvcnRpbmdfcHJvY2Vzc2VzIjoiIn0seyJzdGVwX3RpdGxlIjoiIiwidXNlciI6IiIsImRpYWxvZ3VlIjoicGl4LWNsb2NrIEdpcmEgbGEgcnVsZXRhIiwic3lzdGVtIjoicGl4LXRhcDNyaWdodCBMYSBydWxldGEgaW5kaWNhIGN1YW50b3MgZXNwYWNpb3Mgc2UgYXZhbnphIiwibm90ZSI6IiIsImVudmlyb25tZW50IjoiIiwic3VwcG9ydGluZ19wcm9jZXNzZXMiOiIifSx7InN0ZXBfdGl0bGUiOiIiLCJ1c2VyIjoicGl4LXRoaW5rIENhw60gZW4gcHVudGFqZSwgYWhvcmEgbWUgYWxjYW56YW4gbG9zIHB1bnRvcyBwYXJhIGN1YWRyaWN1bGFyIiwiZGlhbG9ndWUiOiJwaXgtZmlsZSBNdWVzdHJhIHN1IHB1bnRhamUgeSBjdWFkcmljdWxhIiwic3lzdGVtIjoicGl4LWVtcHR5IExhIGN1YWRyw61jdWxhIHBlcnNvbmFsIGVzdMOhIG9jdWx0YSBkZWJham8gZGVsIHRhYmxlcm8uIiwibm90ZSI6IiIsImVudmlyb25tZW50IjoiIiwic3VwcG9ydGluZ19wcm9jZXNzZXMiOiIifSx7InN0ZXBfdGl0bGUiOiIiLCJ1c2VyIjoicGl4LXRoaW5rIEVsIGp1Z2Fkb3IgZGUgYWwgbGFkbyB5YSBjb21wbGV0byBkb3MgbMOtbmVhcyBkZSBzdSB0ZXJyaXRvcmlvLiIsImRpYWxvZ3VlIjoicGl4LXZpZXcgRWwganVnYWRvciBvYnNlcnZhIGTDs25kZSBjYWUgeSBjdcOhbmRvIGNvbXByYW4gc3VzIGVuZW1pZ29zLiIsInN5c3RlbSI6IiIsIm5vdGUiOiJMb3MganVnYWRvcmVzIGVzdMOhbiBhdGVudG9zIGEgZG9uZGUgY29tcHJhbiBsb3MgZGVtw6FzIHBhcmEgbHVlZ28gdXRpbGl6YXJsbyBjb21vIGVzdHJhdGVnaWEuIiwiZW52aXJvbm1lbnQiOiIiLCJzdXBwb3J0aW5nX3Byb2Nlc3NlcyI6IiJ9LHsic3RlcF90aXRsZSI6IkVzdHJhdGVnaWEiLCJ1c2VyIjoicGl4LXRoaW5rIFNhcXXDqSB1bmEgY2FydGEgREVNT0xFUi4gRWxpam8gYWwgb3BvbmVudGUgYW1hcmlsbG8iLCJkaWFsb2d1ZSI6InBpeC1jYW5jZWwgQ29sb2NhIHVuIGN1YWRybyBkZSBhdGFxdWUiLCJzeXN0ZW0iOiJwaXgtZW1wdHkgTG9zIGN1YWRyb3MgZGUgYXRhcXVlIHF1ZWRhbiBmaWpvcyBhIGxhcyB0YXBhcyBpbWFudGFkYXMuIiwibm90ZSI6IiIsImVudmlyb25tZW50IjoiIiwic3VwcG9ydGluZ19wcm9jZXNzZXMiOiIifSx7InN0ZXBfdGl0bGUiOiJBY3RvIiwidXNlciI6InBpeC1oYXBweSBTaSBlc3RhYmEgY3VhZHJpY3VsYWRvIGVzZSBlc3BhY2lvIHkgbG8gcHVkZSBkZW1vbGVyIiwiZGlhbG9ndWUiOiJwaXgta2lvc2sgRWwgb3BvbmVudGUgcmV0aXJhIGVsIGN1YWRybyBjb3JyZXNwb25kaWVudGUuIiwic3lzdGVtIjoicGl4LWVtcHR5IEFsIG5vIHBvZGVyIHZlciBsYSBjdWFkcmljdWxhIG9wb25lbnRlIG5vIHNlIHNhYmUgc2kgcmVhbG1lbnRlIGRlbW9sZXLDoSIsIm5vdGUiOiIiLCJlbnZpcm9ubWVudCI6IiIsInN1cHBvcnRpbmdfcHJvY2Vzc2VzIjoiIn0seyJzdGVwX3RpdGxlIjoiRXN0cmF0ZWdpYSIsInVzZXIiOiJwaXgtc2F5IFNhcXXDqSB1bmEgY2FydGEgRVNQSUFSLiBFbGlqbyBhbCBvcG9uZW50ZSByb2pvIiwiZGlhbG9ndWUiOiJwaXgtZ2FsbGVyeSBEZXN0YXBhIGVsIHRhYmxlcm8gZGVsIG9wb25lbnRlIHJvam8geSBvYnNlcnZhIiwic3lzdGVtIjoicGl4LXJlc2l6ZSBFbCB0YWJsZXJvIGN1ZW50YSBjb24gdGFwYXMgZGVzbGl6YW50ZXMgcXVlIHBlcm1pdGVuIG9jdWx0YXIgeSBtb3N0cmFyIGxhcyBmaWNoYXMuIiwibm90ZSI6IiIsImVudmlyb25tZW50IjoiIiwic3VwcG9ydGluZ19wcm9jZXNzZXMiOiIifSx7InN0ZXBfdGl0bGUiOiJBY3RvIiwidXNlciI6InBpeC1pbnRyaWd1ZWQgQWhvcmEgc2UgZMOzbmRlIHRpZW5lIGN1YWRyaWN1bGFkbywgcG9kcsOtYSBkZW1vbGVyIiwiZGlhbG9ndWUiOiJwaXgtdGFwM3JpZ2h0IEF2YW56YSBoYXN0YSBsbGVnYXIgYWwgdGVycml0b3JpbyBvcG9uZW50ZSB5IGRlbXVlbGUgdW4gY3VhZHJvIiwic3lzdGVtIjoicGl4LWNhbmNlbCBQYWdhIDUgcHVudG9zIHkgdXRpbGl6YSB1biBjdWFkcm8gZGUgYXRhcXVlLiIsIm5vdGUiOiIiLCJlbnZpcm9ubWVudCI6IiIsInN1cHBvcnRpbmdfcHJvY2Vzc2VzIjoiIn0seyJzdGVwX3RpdGxlIjoiUmV2ZWxhY2nDs24iLCJ1c2VyIjoicGl4LXRoaW5rIE5lY2VzaXRvIGNhZXIgZW4gbWkgaW5pY2lvLCBzb2xvIG1lIGZhbHRhIHVuIGN1YWRybyBjZW50cmFsIiwiZGlhbG9ndWUiOiIiLCJzeXN0ZW0iOiIiLCJub3RlIjoiTG9zIGp1Z2Fkb3JlcyBzaWVudGVuIHRlbnNpw7NuIGN1YW5kbyBzb2xvIGxlcyBmYWx0YSB1biDDumx0aW1vIGN1YWRyby4gTXVjaGFzIGNvc2FzIHB1ZWRlbiBwYXNhciBlbiBlc2UgbW9tZW50byBwb3IgbG8gcXVlIGxhIHN1ZXJ0ZSB5IGxhcyBkZWNpc2lvbmVzIGRlIGxvcyBvcG9uZW50ZXMgZGVmaW5lbiBlbCBmaW5hbCBkZWwganVlZ28uIiwiZW52aXJvbm1lbnQiOiIiLCJzdXBwb3J0aW5nX3Byb2Nlc3NlcyI6IiJ9LHsic3RlcF90aXRsZSI6IiIsInVzZXIiOiJwaXgtaGFwcHkgTG9ncsOpIGNvbXBsZXRhciBtaSBjdWFkcmljdWxhIiwiZGlhbG9ndWUiOiJwaXgtZ2FsbGVyeSBFbCBqdWdhZG9yIHJldmVsYSBzdSBjdWFkcmljdWxhIGNvbXBsZXRhIiwic3lzdGVtIjoiIiwibm90ZSI6IiIsImVudmlyb25tZW50IjoiIiwic3VwcG9ydGluZ19wcm9jZXNzZXMiOiIifV1dfQ=="
+      width="100%"
+      height="600"
+      frameborder="0">
+    </iframe>
+  </div>
+</section>
+
+<div class="sep-row">
+  <span class="sep-dot dot-verde"></span>
+  <span class="sep-dot dot-amarillo"></span>
+  <span class="sep-dot dot-azul"></span>
+  <span class="sep-dot dot-rojo"></span>
+</div>
+
+<section class="screen screen-centered" id="s7">
+  <div class="center-copy">
+
+        <h2 class="t-title center-title" id="s7-title">Gestualidad e Interpretacion</h2>
+     <p class="t-body center-text" id="s7-text">
+      A partir de la experiencia que entrega Cuadriculando, se identifican 
+tres gestos principales, los cuales estructuran la experiencia del juego: 
+Cuadricula, como el espacio donde se organiza y oculta la información. 
+Descifrar, como la acción de interpretar y descubrir la ubicación 
+de los cuadros rivales. Atacar, como el momento en que el jugador pone a prueba 
+sus deducciones y ataca sobre el tablero del oponente. Estos tres gestos representan 
+las acciones fundamentales por las cuales la información pasa de estar oculta 
+a ser revelada progresivamente durante la partida.
+    </p>
+
+    <p class="t-body center-text" id="s7-text">
+       Desde estosgestos aparece el concepto de "revelación progresiva" 
+       centrandose en el proceso de descubrimiento que se da a lo largo de la partida.
+       Las posiciones se pueden ir revelando a medida que la partida avanza. Las observaciones
+       y decisiones estratégicas de cada jugador permiten ir descifrando el tablero oculto de los 
+       demás jugadores. La revelación progresiva se entiende como un proceso continuo de descubrimiento, 
+    </p>
+
+
+  </div>
+</section>
+
+    <section class="screen" id="s6">
+      <h2 class="t-title interactive-title" id="s6-title">
+        <span class="text-default">PRUEBA LA EXPERIENCIA</span>
+        <span class="text-hover">NO TE CONFIES</span>
+      </h2>
+      <div class="title-arrow" id="s6-arrow">→</div>
+
+      <div id="f1" class="dot dot-verde"></div>
+      <div id="f2" class="dot dot-amarillo"></div>
+      <div id="f3" class="dot dot-azul"></div>
+      <div id="f4" class="dot dot-rojo"></div>
+      <div id="f5" class="dot dot-verde"></div>
+      <div id="f6" class="dot dot-amarillo"></div>
+      <div id="f7" class="dot dot-azul"></div>
+      <div id="f8" class="dot dot-rojo"></div>
+    </section>
+  </main>
+
+
+  <footer class="site-colophon" id="colofon">
+  <div class="colophon-inner">
+    <p class="colophon-kicker"></p>
+    <h2 class="colophon-title">Cuadriculando</h2>
+    <p class="colophon-text">
+      Juego de estrategia y sabotaje. Sitio desarrollado para presentar la experiencia visual del proyecto.
+    </p>
+
+    <p class="colophon-meta">
+  Proyecto realizado con apoyo de inteligencia artificial en su proceso de desarrollo y estructuración.
+</p>
+
+    <p class="colophon-meta">
+      Dirección creativa, contenido y desarrollo: Catalina González.
+    </p>
+    <p class="colophon-meta">
+      © 2026 Cuadriculando. Todos los derechos reservados.
+    </p>
+  </div>
+</footer>
+
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Cerrar imagen">×</button>
+    <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+    <div class="lightbox-content">
+      <img id="lightbox-image" src="" alt="Vista ampliada">
+    </div>
+  </div>
+
+  <script src="script.js" defer></script>
 </body>
+
+  <script>
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.side-index__btn');
+
+    function setActiveSection(id) {
+      navLinks.forEach(link => {
+        const isMatch = link.getAttribute('href') === `#${id}`;
+        link.classList.toggle('is-active', isMatch);
+      });
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    }, {
+      threshold: 0.55
+    });
+
+    sections.forEach(section => observer.observe(section));
+  </script>
+</body>
+</html>
 </html>
