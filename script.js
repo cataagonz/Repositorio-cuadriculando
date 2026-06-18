@@ -185,15 +185,15 @@ function layoutHero(metrics) {
   title.style.width = `${metrics.gridW}px`;
   title.style.top = `${Math.floor(metrics.cy(1) + metrics.cell * 0.2)}px`;
 
-  const sqSize = Math.floor(metrics.cell * 0.17);
+  const sqSize = Math.floor(metrics.cell * 0.18);
   const titleTop = parseInt(title.style.top, 10) || metrics.cy(1);
   const titleHeight = title.offsetHeight || Math.floor(metrics.cell * 0.55);
 
   const squares = [
-    { id: 'sq1', left: metrics.offX - 153, top: titleTop + titleHeight * 0.11 },
-    { id: 'sq2', left: metrics.offX + metrics.gridW * 0.315, top: titleTop + titleHeight * 0.60 },
-    { id: 'sq3', left: metrics.offX + metrics.gridW * 0.528, top: titleTop + titleHeight * 0.12 },
-    { id: 'sq4', left: metrics.offX + metrics.gridW * 0.93, top: titleTop + titleHeight * 0.12 }
+    { id: 'sq1', left: metrics.offX - 160, top: titleTop + titleHeight * 0.12 },
+    { id: 'sq2', left: metrics.offX + metrics.gridW * 0.316, top: titleTop + titleHeight * 0.60 },
+    { id: 'sq3', left: metrics.offX + metrics.gridW * 0.529, top: titleTop + titleHeight * 0.11 },
+    { id: 'sq4', left: metrics.offX + metrics.gridW * 0.94, top: titleTop + titleHeight * 0.12 }
   ];
 
   squares.forEach(({ id, left, top }) => {
