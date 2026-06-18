@@ -34,13 +34,19 @@ body {
   touch-action: none;
 }
 
-/* cuadrícula 4x4 */
+/* cuadrícula 4x4 CENTRADA, sin ocupar toda la pantalla */
 .tablero-grid {
   position: absolute;
-  inset: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(70vh, 70vw, 520px);
+  aspect-ratio: 1 / 1; /* SIEMPRE cuadrado */
+
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(4, 1fr);
+
   border-top: 1px solid var(--grid);
   border-left: 1px solid var(--grid);
 }
@@ -53,6 +59,7 @@ body {
   overflow: hidden;
 }
 
+/* relleno de cada celda */
 .tablero-fill {
   position: absolute;
   inset: 0;
@@ -109,4 +116,194 @@ body {
     font-size: 10px;
     bottom: 18px;
   }
+}
+
+/* Grupo de cuadros que viajan */
+.tablero-group {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40%;
+  max-width: 260px;
+  aspect-ratio: 3 / 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) translateX(-200%) rotate(-270deg);
+  z-index: 10;
+}
+
+.tablero-group-square {
+  flex: 1;
+  margin: 0 4px;
+  background: var(--tile);
+  border: 1px solid var(--grid);
+}
+
+.tablero-group.is-active {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateX(0) rotate(0deg);
+}
+
+/* Celdas especiales clickeables en el estado final */
+.tablero-cell.special {
+  cursor: pointer;
+}
+
+/* Base igual que las demás, sólo usamos hover/click para señal */
+.tablero-cell.special .tablero-fill {
+  transition: opacity 0.2s ease, background 0.3s ease;
+}
+
+/* Señal mínima en hover: sube un poco la opacidad */
+.tablero-cell.special:hover .tablero-fill {
+  opacity: 1;
+}
+
+/* Click → activada en azul del juego */
+.tablero-cell.special.is-active .tablero-fill {
+  background: #3c6ed4; /* azul del juego */
+  opacity: 1;
+}
+
+/* ================= PANTALLA AZUL TIPO BUSCAMINAS ================= */
+
+/* Overlay negro de fondo */
+#blue-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* visible cuando se dispara */
+#blue-overlay.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Contenedor cuadrado con la grilla (azul encima, colores detrás) */
+.blue-grid {
+  position: relative;
+  width: min(90vmin, 900px);
+  aspect-ratio: 1 / 1;          /* cuadrado perfecto */
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* 6x6 */
+  grid-template-rows: repeat(6, 1fr);
+}
+
+/* Cada celda de la grilla */
+.blue-cell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Capa de “suelo” detrás: ahí van los colores o negro */
+.blue-cell-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: transparent;
+}
+
+/* celdas con color pequeño centrado */
+.blue-cell-bg.small-color {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.blue-cell-bg.small-color::before {
+  content: "";
+  width: 35%;
+  height: 35%;
+  border-radius: 3px;
+  background: currentColor;
+}
+
+/* capa superior azul que se puede “borrar” */
+.blue-cell-overlay {
+  position: absolute;
+  inset: 0;
+  background: #3c6ed4;           /* azul del juego */
+  opacity: 1;
+  transition: opacity 0.15s ease;
+  z-index: 2;
+}
+
+/* al hacer hover, el azul desaparece y deja ver el fondo (color o negro) */
+.blue-cell:hover .blue-cell-overlay {
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Si la celda tiene color descubierto por click, la capa azul se mantiene fuera */
+.blue-cell.discovered .blue-cell-overlay {
+  opacity: 0;
+}
+
+/* ================= SIGUIENTE PANTALLA SENCILLA ================= */
+
+#next-screen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.7s ease;
+  z-index: 60;
+}
+
+#next-screen.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Cuadritos pequeños en la siguiente pantalla */
+.next-dots {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.next-dot {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease,
+    top 0.35s ease,
+    left 0.35s ease;  /* añade transición de movimiento */
+}
+
+/* cuando la pantalla ya es visible, los puntos aparecen */
+#next-screen.is-visible .next-dot {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@keyframes dot-vibrate {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(1px, -1px); }
+  50%  { transform: translate(-1px, 1px); }
+  75%  { transform: translate(1px, 1px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* vibración: se suma sobre la transición de top/left */
+.next-dot.near {
+  animation: dot-vibrate 0.15s infinite;
 }

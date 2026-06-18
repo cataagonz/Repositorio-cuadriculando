@@ -4,17 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cuadriculando – Experiencia tablero</title>
-  <!-- OJO: enlaza experimental.css -->
   <link rel="stylesheet" href="experimental.css" />
 </head>
 <body>
   <section id="s-experimental">
     <div class="tablero-grid" id="board"></div>
+
+    <!-- Grupo de cuadros que viaja en cada transición -->
+    <div class="tablero-group" id="travel-group" aria-hidden="true">
+      <div class="tablero-group-square"></div>
+      <div class="tablero-group-square"></div>
+      <div class="tablero-group-square"></div>
+    </div>
+
     <div class="tablero-notch"></div>
     <p class="tablero-instruction" id="instruction">arrastra horizontalmente</p>
   </section>
 
-  <!-- OJO: enlaza experimental.js -->
+  <div id="blue-overlay"></div>
+  <div id="next-screen"></div>
+
   <script src="experimental.js"></script>
 </body>
 </html>

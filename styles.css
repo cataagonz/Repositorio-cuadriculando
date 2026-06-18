@@ -295,28 +295,53 @@ main {
   transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
-#s-gallery {
+/* ===================== GALERÍA ===================== */
+
+/* Sección GALERÍA con sistema de 3 filas como las demás */
+#s-gallery.section-blocks {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Elementos posicionados por data-row/data-col dentro de la galería */
+#s-gallery [data-row][data-col] {
+  position: absolute;
+}
+
+/* Título GALERÍA: fila superior, alineado a la derecha */
+/* Título GALERÍA: fila superior, alineado a la derecha */
+#s-gallery .section-title.right-title {
+  top: 10vh;           /* misma fila superior que el resto de secciones */
+  left: auto;
+  right: var(--pad);   /* se apoya en el padding derecho global */
+}
+/* Carrusel ocupando filas 2 y 3 (zona central) */
+.carousel-wrap {
+  position: absolute;
+  z-index: 3;
+  left: 10%;
+  right: 10%;
+  top: 22%;    /* sube un poco para dar más alto */
+  bottom: 8%;  /* baja un poco para usar casi dos filas completas */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.carousel-wrap {
-  position: absolute;
-  z-index: 3;
-}
-
+/* Track: imágenes grandes que llenan las filas 2–3 */
 .gallery-track {
   width: 100%;
-  height: 100%;
+  height: 100%;                 /* ocupa todo el alto disponible */
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(220px, 1fr);
+  grid-auto-columns: minmax(340px, 1fr);  /* un poco más anchas */
   align-items: center;
-  gap: 18px;
+  gap: 24px;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0 12px;
+  padding: 0 24px;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   scrollbar-width: none;
@@ -329,24 +354,24 @@ main {
 
 .gallery-slide {
   position: relative;
-  aspect-ratio: 1 / 1;
   width: 100%;
-  height: auto;
-  overflow: hidden;
+  height: 100%;       /* usa todo el alto del carrusel */
   scroll-snap-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #111;
   cursor: pointer;
+  overflow: hidden;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
-  transform-origin: center;
 }
 
+/* Para que no se vean cortadas verticalmente */
 .gallery-slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  width: auto;
+  height: 100%;       /* manda el alto */
+  max-width: none;
+  object-fit: contain;   /* muestra completa la foto */
   object-position: center;
   display: block;
   background: #111;
@@ -354,7 +379,7 @@ main {
 }
 
 .gallery-slide:hover {
-  transform: scale(1.08);
+  transform: scale(1.04);
   z-index: 10;
 }
 
@@ -373,6 +398,7 @@ main {
   letter-spacing: 0.08em;
 }
 
+/* Botones de navegación */
 .gallery-arrow {
   position: absolute;
   top: 50%;
@@ -391,17 +417,18 @@ main {
 
 .gallery-arrow:hover {
   border-color: #fff;
-  background: rgba(255,255,255,0.08);
+  background: rgba(0, 0, 0, 0.0);
 }
 
 #gallery-prev {
-  left: -56px;
+  left: -52px;
 }
 
 #gallery-next {
-  right: -56px;
+  right: -52px;
 }
 
+/* Bandas de puntos alrededor del carrusel */
 .gallery-band {
   position: absolute;
   left: 0;
@@ -412,11 +439,11 @@ main {
 }
 
 .gallery-band-top {
-  top: 0;
+  top: 18%;
 }
 
 .gallery-band-bottom {
-  bottom: 0;
+  bottom: 12%;
 }
 
 .gallery-band-dot {
@@ -444,6 +471,8 @@ main {
   right: 16%;
   bottom: 2px;
 }
+
+/* =================== FIN GALERÍA =================== */
 
 .lightbox {
   position: fixed;
@@ -526,24 +555,47 @@ main {
 
 @media (max-width: 900px) {
   .gallery-track {
-    grid-auto-columns: minmax(180px, 1fr);
-    gap: 14px;
+    grid-auto-columns: minmax(260px, 1fr);
+    gap: 18px;
+    padding: 0 16px;
+  }
+
+  .carousel-wrap {
+    left: 8%;
+    right: 8%;
+    top: 30%;
+    bottom: 12%;
+  }
+
+  #gallery-prev {
+    left: -40px;
+  }
+
+  #gallery-next {
+    right: -40px;
   }
 }
 
 @media (max-width: 640px) {
   .gallery-track {
-    grid-auto-columns: minmax(160px, 1fr);
-    gap: 12px;
-    padding: 0 8px;
+    grid-auto-columns: minmax(220px, 1fr);
+    gap: 14px;
+    padding: 0 10px;
+  }
+
+  .carousel-wrap {
+    left: 4%;
+    right: 4%;
+    top: 32%;
+    bottom: 10%;
   }
 
   #gallery-prev {
-    left: 8px;
+    left: 0;
   }
 
   #gallery-next {
-    right: 8px;
+    right: 0;
   }
 
   .lightbox-content {
@@ -686,13 +738,28 @@ main {
   color: #fff;
 }
 
-/* Fuerza visual oscura dentro del embed */
+.pix-section {
+  background: #000;
+  padding: 80px 32px;
+}
+
+.pix-wrap {
+  width: min(1100px, 100%);
+  margin: 0 auto;
+}
+
+.pix-wrap iframe {
+  width: 100%;
+  max-width: 100%;
+  border: 0;
+  background: #000;
+}
+
 .pix-wrap,
 .pix-wrap * {
   color: #fff;
 }
 
-/* Si el widget renderiza tarjetas o paneles claros */
 .pix-wrap [class*="card"],
 .pix-wrap [class*="panel"],
 .pix-wrap [class*="step"],
@@ -703,7 +770,6 @@ main {
   border-color: rgba(255,255,255,0.18) !important;
 }
 
-/* Textos secundarios */
 .pix-wrap small,
 .pix-wrap .note,
 .pix-wrap [class*="note"],
@@ -712,7 +778,6 @@ main {
   color: rgba(255,255,255,0.75) !important;
 }
 
-/* Botones o etiquetas si existen */
 .pix-wrap button,
 .pix-wrap [role="button"],
 .pix-wrap .button,
@@ -722,7 +787,6 @@ main {
   border: 1px solid rgba(255,255,255,0.2) !important;
 }
 
-/* Inputs o áreas embebidas */
 .pix-wrap input,
 .pix-wrap textarea,
 .pix-wrap select {
@@ -731,18 +795,15 @@ main {
   border: 1px solid rgba(255,255,255,0.2) !important;
 }
 
-/* Si el widget inyecta SVGs o íconos oscuros */
 .pix-wrap svg {
   color: #fff;
   fill: currentColor;
 }
 
-/* Enlaces */
-.pix-wrap a {
+pix-wrap a {
   color: #fff !important;
 }
 
-/* Iframes, si el widget renderiza dentro de uno */
 .pix-wrap iframe {
   width: 100%;
   background: #000;
@@ -780,18 +841,6 @@ html {
   scroll-behavior: smooth;
 }
 
-@media (max-width: 900px) {
-  .side-index {
-    left: 12px;
-    gap: 10px;
-  }
-
-  .side-index__btn {
-    width: 14px;
-    height: 14px;
-  }
-}
-
 .side-index {
   position: fixed;
   left: 24px;
@@ -800,54 +849,66 @@ html {
   z-index: 2000;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .side-index__btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #fff;
+  transition: transform 0.2s ease, gap 0.2s ease;
+}
+
+.side-index__btn::before {
+  content: "";
   width: 18px;
   height: 18px;
   display: block;
   background: transparent;
   border: 1px solid rgba(255,255,255,0.35);
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  flex-shrink: 0;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-.side-index__btn:hover,
-.side-index__btn:focus-visible {
-  transform: scale(1.08);
+.side-index__label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-4px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.side-index__btn.is-active .side-index__label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.side-index__btn:hover .side-index__label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.side-index__btn.c-verde.is-active::before { background: #74d643; border-color: #74d643; }
+.side-index__btn.c-amarillo.is-active::before { background: #f0cf3c; border-color: #f0cf3c; }
+.side-index__btn.c-azul.is-active::before { background: #3c6ed4; border-color: #3c6ed4; }
+.side-index__btn.c-rojo.is-active::before { background: #d23434; border-color: #d23434; }
+
+.side-index__btn:hover::before {
+  background: rgba(255,255,255,0.15);
   border-color: #fff;
 }
 
-.side-index__btn.is-active {
-  border-color: transparent;
-}
-
-.side-index__btn.c-verde.is-active {
-  background: #49a942;
-}
-
-.side-index__btn.c-amarillo.is-active {
-  background: #f1c40f;
-}
-
-.side-index__btn.c-azul.is-active {
-  background: #2d9cdb;
-}
-
-.side-index__btn.c-rojo.is-active {
-  background: #eb5757;
-}
-
 @media (max-width: 900px) {
-  .side-index {
-    left: 12px;
-    gap: 10px;
-  }
-
-  .side-index__btn {
-    width: 14px;
-    height: 14px;
-  }
+  .side-index { left: 8px; gap: 6px; }
+  .side-index__btn::before { width: 14px; height: 14px; }
+  .side-index__label { display: none; }
 }
 
 .subtitle {
@@ -860,19 +921,61 @@ html {
   color: #ffffff;
 }
 
-.pix-section {
-  background: #000;
-  padding: 80px 32px;
+/* Sección S7 / Gestualidad */
+#sG {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8vh 32px;
+  margin: 0;
 }
 
-.pix-wrap {
-  width: min(1100px, 100%);
-  margin: 0 auto;
-}
-
-.pix-wrap iframe {
+#sG #sG-title {
+  position: static;
+  display: block;
   width: 100%;
-  max-width: 100%;
-  border: 0;
-  background: #000;
+  font-size: clamp(2.2rem, 5vw, 5rem);
+  text-align: center;
+  margin-bottom: 8vh;
+}
+
+#sG .center-text {
+  position: static;
+  display: block;
+  width: min(720px, 100%);
+  margin: 0 auto;
+  font-size: clamp(1rem, 1.3vw, 1.35rem);
+  line-height: 1.6;
+  text-align: center;
+}
+
+#sG .botones-container {
+  display: flex;
+  gap: 3rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 6vh 0;
+}
+
+#sG .enlace-accion {
+  font-family: 'Inlanders', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease, opacity 0.3s ease;
+  opacity: 0.8;
+}
+
+#sG .enlace-accion:visited {
+  color: #fff;
+}
+
+#sG .enlace-accion:hover {
+  color: #00d9ff;
+  opacity: 1;
 }
