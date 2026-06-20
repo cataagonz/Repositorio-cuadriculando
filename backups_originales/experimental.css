@@ -118,40 +118,48 @@ body {
   }
 }
 
-/* Contenedor de la animación de transición temporal */
-.anim-container {
+/* Grupo de cuadros que viajan */
+.tablero-group {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 50%;
+  left: 50%;
+  width: 40%;
+  max-width: 260px;
+  aspect-ratio: 3 / 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) translateX(-200%) rotate(-270deg);
   z-index: 10;
-  transform-origin: center center;
 }
 
-/* Réplica de celda para rotación grupal e individual */
-.replica-square {
-  position: absolute;
+.tablero-group-square {
+  flex: 1;
+  margin: 0 4px;
   background: var(--tile);
   border: 1px solid var(--grid);
-  box-sizing: border-box;
-  transform-origin: center center;
+}
+
+.tablero-group.is-active {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateX(0) rotate(0deg);
 }
 
 /* Celdas especiales clickeables en el estado final */
-.state-4 .tablero-cell.special {
+.tablero-cell.special {
   cursor: pointer;
 }
 
-/* Base igual que las demás, sólo usamos click para señal */
+/* Base igual que las demás, sólo usamos hover/click para señal */
 .tablero-cell.special .tablero-fill {
   transition: opacity 0.2s ease, background 0.3s ease;
 }
 
-/* Hover en celdas clickeables no activadas → pista visual gris un poco más oscura */
-.state-4 .tablero-cell.special:not(.is-active):hover .tablero-fill {
-  background: #d5d5d5;
+/* Señal mínima en hover: sube un poco la opacidad */
+.tablero-cell.special:hover .tablero-fill {
+  opacity: 1;
 }
 
 /* Click → activada en azul del juego */
@@ -218,10 +226,8 @@ body {
   content: "";
   width: 35%;
   height: 35%;
-  border-radius: 0; /* Cambiado a cuadrado perfecto */
+  border-radius: 3px;
   background: currentColor;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
-  transform-origin: center center;
 }
 
 /* capa superior azul que se puede “borrar” */
@@ -245,45 +251,20 @@ body {
   opacity: 0;
 }
 
-/* Efecto de iluminación neón en el cuadro de color al hacer clic (descubrirlo) */
-.blue-cell.discovered .blue-cell-bg.small-color::before {
-  animation: glow-vibrate 0.18s infinite linear;
-  box-shadow: 0 0 16px 4px currentColor, 0 0 4px 1px currentColor;
-}
-
-/* Animación de explosión en la cuadrícula azul al completarla */
-.explode .blue-cell.discovered .blue-cell-bg.small-color::before {
-  animation: cell-explode 0.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-}
-
-@keyframes cell-explode {
-  0% {
-    transform: scale(1.3);
-    opacity: 1;
-    box-shadow: 0 0 16px 4px currentColor, 0 0 4px 1px currentColor;
-  }
-  100% {
-    transform: scale(6.0);
-    opacity: 0;
-    box-shadow: 0 0 50px 20px currentColor, 0 0 20px 5px currentColor;
-  }
-}
-
 /* ================= SIGUIENTE PANTALLA SENCILLA ================= */
 
 #next-screen {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0); /* Iniciamos con fondo transparente para ver la explosión por debajo */
+  background: #000;
   opacity: 0;
   pointer-events: none;
-  transition: background-color 1.5s ease; /* Solo transicionamos el color de fondo para fundido a negro lento */
+  transition: opacity 0.7s ease;
   z-index: 60;
 }
 
 #next-screen.is-visible {
-  opacity: 1; /* Se hace visible instantáneamente sin retraso de opacidad */
-  background-color: #000000; /* Transición suave a negro sólido */
+  opacity: 1;
   pointer-events: auto;
 }
 
@@ -298,10 +279,20 @@ body {
   position: absolute;
   width: 24px;
   height: 24px;
-  border-radius: 0; /* Cuadrados perfectos */
+  border-radius: 3px;
   opacity: 0;
-  transform: scale(0) rotate(0deg);
-  /* Transición gestionada por JS para efectos dinámicos en la explosión */
+  transform: scale(0.6);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease,
+    top 0.35s ease,
+    left 0.35s ease;  /* añade transición de movimiento */
+}
+
+/* cuando la pantalla ya es visible, los puntos aparecen */
+#next-screen.is-visible .next-dot {
+  opacity: 1;
+  transform: scale(1);
 }
 
 @keyframes dot-vibrate {
@@ -312,33 +303,7 @@ body {
   100% { transform: translate(0, 0); }
 }
 
-/* vibración: se suma sobre la transición de top/left y anula la flotación al arrastrar */
+/* vibración: se suma sobre la transición de top/left */
 .next-dot.near {
-  animation: dot-vibrate 0.15s infinite !important;
-}
-
-/* Vibración de alta frecuencia para los cuadros iluminados */
-@keyframes glow-vibrate {
-  0%   { transform: scale(1.3) translate(0, 0); }
-  25%  { transform: scale(1.3) translate(0.8px, -0.8px); }
-  50%  { transform: scale(1.3) translate(-0.8px, 0.8px); }
-  75%  { transform: scale(1.3) translate(0.8px, 0.8px); }
-  100% { transform: scale(1.3) translate(0, 0); }
-}
-
-/* Clase para activar la flotación de partículas */
-.next-dot.floating-active {
-  animation: dot-float var(--float-duration, 5s) ease-in-out infinite alternate;
-}
-
-@keyframes dot-float {
-  0% {
-    translate: 0px 0px;
-  }
-  50% {
-    translate: var(--float-x, 4px) var(--float-y, -6px);
-  }
-  100% {
-    translate: var(--float-x2, -4px) var(--float-y2, 6px);
-  }
+  animation: dot-vibrate 0.15s infinite;
 }

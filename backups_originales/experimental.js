@@ -1,5 +1,6 @@
 const boardEl = document.getElementById("board");
 const instructionEl = document.getElementById("instruction");
+const groupEl = document.getElementById("travel-group");
 const blueOverlayEl = document.getElementById("blue-overlay");
 const nextScreenEl = document.getElementById("next-screen");
 
@@ -9,14 +10,14 @@ const key = (c, r) => `${c}-${r}`;
 
 /* ========== ESTADOS TABLERO ========== */
 
-// Celdas especiales clickeables en el estado final (distribuidas y separadas)
+// Celdas especiales clickeables en el estado final
 const specialCellsKeys = new Set([
-  key(0, 0),
-  key(3, 0),
+  key(0, 1),
   key(1, 1),
+  key(2, 1),
+  key(3, 1),
+  key(1, 2),
   key(2, 2),
-  key(0, 3),
-  key(3, 3),
 ]);
 
 /* Estado 1: 3 cuadros */
@@ -151,22 +152,8 @@ function buildBlueGrid() {
         foundColors.push(cell.dataset.colorValue);
 
         if (discoveredCount === totalColors) {
-          // 1. Medir las posiciones estables de las celdas antes de que exploten
-          const discoveredElements = document.querySelectorAll(".blue-cell.discovered");
-          const sourceCoordinates = {};
-          discoveredElements.forEach((el) => {
-            const color = el.dataset.colorValue;
-            const rect = el.getBoundingClientRect();
-            const leftPercent = ((rect.left + rect.width / 2) / window.innerWidth) * 100;
-            const topPercent = ((rect.top + rect.height / 2) / window.innerHeight) * 100;
-            sourceCoordinates[color] = { top: topPercent, left: leftPercent };
-          });
-
-          // 2. Activar la animación de explosión de las celdas en el CSS
-          blueOverlayEl.classList.add("explode");
-
-          // 3. Iniciar la pantalla final con la explosión de cuadritos de forma inmediata
-          buildNextScreenDots(foundColors, sourceCoordinates);
+          // encontraste los 6 → construir pantalla final y mostrarla
+          buildNextScreenDots(foundColors);
           nextScreenEl.classList.add("is-visible");
         }
       }
@@ -176,7 +163,7 @@ function buildBlueGrid() {
   blueOverlayEl.appendChild(grid);
 }
 
-function buildNextScreenDots(foundColors, sourceCoordinates) {
+function buildNextScreenDots(foundColors) {
   // limpiamos pantalla final
   nextScreenEl.innerHTML = "";
 
@@ -188,18 +175,8 @@ function buildNextScreenDots(foundColors, sourceCoordinates) {
   const extraPalette = ["#74d643", "#f0cf3c", "#3c6ed4", "#d23434"];
   const allColors = [...foundColors, ...extraPalette];
 
-  const coordKeys = Object.keys(sourceCoordinates);
-  function getSourceCoord(color) {
-    if (sourceCoordinates[color]) {
-      return sourceCoordinates[color];
-    }
-    // Fallback a una celda descubierta aleatoria
-    const randomColor = coordKeys[Math.floor(Math.random() * coordKeys.length)];
-    return sourceCoordinates[randomColor];
-  }
+  const totalDots = 200; // número total de puntos
 
-  const dotsPerColor = 16;
-  const totalDots = allColors.length * dotsPerColor; // 160 puntos en total (16 por color)
   const dots = [];
 
   for (let i = 0; i < totalDots; i++) {
@@ -210,68 +187,18 @@ function buildNextScreenDots(foundColors, sourceCoordinates) {
     dot.style.backgroundColor = color;
     dot.dataset.colorValue = color;
 
-    // Posición inicial: exactamente en la celda de origen correspondiente
-    const source = getSourceCoord(color);
-    dot.style.top = `${source.top}%`;
-    dot.style.left = `${source.left}%`;
-    dot.style.transform = "scale(0) rotate(0deg)";
-    dot.style.opacity = "0";
-
-    // posición de destino guardada en dataset
-    const destTop = Math.random() * 80 + 10;   // 10–90%
-    const destLeft = Math.random() * 80 + 10;
-    dot.dataset.baseTop = destTop;
-    dot.dataset.baseLeft = destLeft;
-
-    // Asignar variables CSS de flotación con valores aleatorios para un movimiento orgánico
-    const floatDuration = 4 + Math.random() * 4; // Entre 4 y 8 segundos
-    const fx = (Math.random() - 0.5) * 20; // -10px a 10px
-    const fy = (Math.random() - 0.5) * 20;
-    const fx2 = (Math.random() - 0.5) * 20;
-    const fy2 = (Math.random() - 0.5) * 20;
-    
-    dot.style.setProperty("--float-duration", `${floatDuration}s`);
-    dot.style.setProperty("--float-x", `${fx}px`);
-    dot.style.setProperty("--float-y", `${fy}px`);
-    dot.style.setProperty("--float-x2", `${fx2}px`);
-    dot.style.setProperty("--float-y2", `${fy2}px`);
+    // posición inicial aleatoria (con cierto margen)
+    const top = Math.random() * 80 + 10;   // 10–90%
+    const left = Math.random() * 80 + 10;
+    dot.dataset.baseTop = top;
+    dot.dataset.baseLeft = left;
+    dot.style.top = `${top}%`;
+    dot.style.left = `${left}%`;
 
     container.appendChild(dot);
     dots.push(dot);
   }
 
-  // Activar la explosión y el vuelo hacia el destino
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      dots.forEach((d) => {
-        // Retraso de animación aleatorio para dar el efecto de partículas
-        const delay = Math.random() * 0.4; // 0 a 400ms
-        const duration = 0.8 + Math.random() * 0.4; // 0.8s a 1.2s
-        const rotation = (Math.random() - 0.5) * 360; // giro aleatorio
-
-        d.style.transition = `
-          top ${duration}s cubic-bezier(0.19, 1, 0.22, 1) ${delay}s,
-          left ${duration}s cubic-bezier(0.19, 1, 0.22, 1) ${delay}s,
-          transform ${duration}s cubic-bezier(0.19, 1, 0.22, 1) ${delay}s,
-          opacity ${duration}s ease ${delay}s
-        `;
-
-        d.style.top = `${d.dataset.baseTop}%`;
-        d.style.left = `${d.dataset.baseLeft}%`;
-        d.style.transform = `scale(1) rotate(${rotation}deg)`;
-        d.style.opacity = "1";
-      });
-    });
-  });
-
-  // Activar la clase de flotación una vez que los cuadritos se hayan asentado
-  setTimeout(() => {
-    dots.forEach((d) => {
-      d.classList.add("floating-active");
-    });
-  }, 1600);
-
-  const colorQuadrants = {}; // colorValue -> quadrantKey
   let activeColor = null;
   let dragQuadrant = null;
 
@@ -296,38 +223,6 @@ function buildNextScreenDots(foundColors, sourceCoordinates) {
     br: { top: 75, left: 75 },
   };
 
-  // Calcula los centros de cuadrículas de 4x4 para evitar que se solapen dentro de un cuadrante
-  function getGridCenters(cx, cy, count) {
-    const centers = [];
-    
-    // Calcular spacingX y spacingY basados en vmin para que los desplazamientos sean cuadrados
-    const spacingVmin = 14; // 14% del vmin para separar los grupos de 4x4
-    const spacingX = (spacingVmin * Math.min(window.innerWidth, window.innerHeight)) / window.innerWidth;
-    const spacingY = (spacingVmin * Math.min(window.innerWidth, window.innerHeight)) / window.innerHeight;
-
-    if (count === 1) {
-      centers.push({ x: cx, y: cy });
-    } else if (count === 2) {
-      centers.push({ x: cx - spacingX / 2, y: cy });
-      centers.push({ x: cx + spacingX / 2, y: cy });
-    } else if (count === 3) {
-      centers.push({ x: cx - spacingX / 2, y: cy + spacingY / 4 });
-      centers.push({ x: cx + spacingX / 2, y: cy + spacingY / 4 });
-      centers.push({ x: cx, y: cy - spacingY / 2 });
-    } else {
-      const cols = Math.ceil(Math.sqrt(count));
-      const rows = Math.ceil(count / cols);
-      for (let i = 0; i < count; i++) {
-        const c = i % cols;
-        const r = Math.floor(i / cols);
-        const ox = (c - (cols - 1) / 2) * spacingX;
-        const oy = (r - (rows - 1) / 2) * spacingY;
-        centers.push({ x: cx + ox, y: cy + oy });
-      }
-    }
-    return centers;
-  }
-
   function onPointerDown(e) {
     const dot = e.target.closest(".next-dot");
     if (!dot) return;
@@ -347,8 +242,6 @@ function buildNextScreenDots(foundColors, sourceCoordinates) {
       const newTop = center.top + (baseTop - center.top) * 0.3;
       const newLeft = center.left + (baseLeft - center.left) * 0.3;
 
-      // Al arrastrar removemos la transición de explosión y usamos una transición de movimiento más rápida
-      d.style.transition = "top 0.35s ease, left 0.35s ease, transform 0.35s ease, opacity 0.35s ease";
       d.style.top = `${newTop}%`;
       d.style.left = `${newLeft}%`;
       d.classList.add("near");
@@ -383,50 +276,25 @@ function buildNextScreenDots(foundColors, sourceCoordinates) {
       return;
     }
 
-    // Guardar el cuadrante destino para este color
-    colorQuadrants[activeColor] = dragQuadrant;
+    const center = quadrantCenters[dragQuadrant];
 
-    // Recalcular posiciones para todos los colores asignados a cuadrantes
-    const quadrants = ["tl", "tr", "bl", "br"];
-    quadrants.forEach((q) => {
-      const colorsInQuad = allColors.filter((color) => colorQuadrants[color] === q);
-      if (colorsInQuad.length === 0) return;
+    // al soltar, fijamos nuevas posiciones base dentro del cuadrante
+    dots.forEach((d) => {
+      if (d.dataset.colorValue !== activeColor) return;
 
-      const center = quadrantCenters[q];
-      const gridCenters = getGridCenters(center.left, center.top, colorsInQuad.length);
+      d.classList.remove("near");
 
-      colorsInQuad.forEach((color, colorIdx) => {
-        const gridCenter = gridCenters[colorIdx];
-        const colorDots = dots.filter((d) => d.dataset.colorValue === color);
+      // pequeña dispersión alrededor del centro para que no se solapen
+      const offsetTop = (Math.random() - 0.5) * 15;  // ±7.5%
+      const offsetLeft = (Math.random() - 0.5) * 15;
 
-        // Calcular spacingX y spacingY basados en vmin para el espaciado interno de la cuadrícula de 4x4
-        const innerSpacingVmin = 3.0; // 3% del vmin para separar los cuadritos de la grilla
-        const spacingX = (innerSpacingVmin * Math.min(window.innerWidth, window.innerHeight)) / window.innerWidth;
-        const spacingY = (innerSpacingVmin * Math.min(window.innerWidth, window.innerHeight)) / window.innerHeight;
+      const newTop = center.top + offsetTop;
+      const newLeft = center.left + offsetLeft;
 
-        colorDots.forEach((d, dotIdx) => {
-          d.classList.remove("near");
-
-          // Cuadrícula de 4x4
-          const col = dotIdx % 4;
-          const row = Math.floor(dotIdx / 4);
-
-          const newLeft = gridCenter.x + (col - 1.5) * spacingX;
-          const newTop = gridCenter.y + (row - 1.5) * spacingY;
-
-          d.dataset.baseTop = newTop;
-          d.dataset.baseLeft = newLeft;
-
-          // Movimiento de transición suave al formar la cuadrícula
-          d.style.transition = `
-            top 0.6s cubic-bezier(0.19, 1, 0.22, 1),
-            left 0.6s cubic-bezier(0.19, 1, 0.22, 1),
-            transform 0.6s cubic-bezier(0.19, 1, 0.22, 1)
-          `;
-          d.style.top = `${newTop}%`;
-          d.style.left = `${newLeft}%`;
-        });
-      });
+      d.dataset.baseTop = newTop;
+      d.dataset.baseLeft = newLeft;
+      d.style.top = `${newTop}%`;
+      d.style.left = `${newLeft}%`;
     });
 
     activeColor = null;
@@ -496,51 +364,27 @@ function animateTransition(prevSet, nextSet, onDone) {
     return;
   }
 
-  // 1. Crear el contenedor de animación temporal
-  const animContainer = document.createElement("div");
-  animContainer.className = "anim-container";
-  animContainer.style.transition = "none";
-  animContainer.style.transform = "rotate(-90deg) scale(0.3)";
-  animContainer.style.opacity = "0";
-  boardEl.appendChild(animContainer);
+  groupEl.classList.remove("is-active");
+  groupEl.style.transition = "none";
+  groupEl.style.opacity = "0";
+  groupEl.style.transform =
+    "translate(-50%, -50%) translateX(-200%) rotate(-270deg)";
 
-  // 2. Crear las réplicas para cada nueva celda
-  newCells.forEach((key) => {
-    const [c, r] = key.split("-").map(Number);
-    const replica = document.createElement("div");
-    replica.className = "replica-square";
-    replica.style.left = `${c * 25}%`;
-    replica.style.top = `${r * 25}%`;
-    replica.style.width = "25%";
-    replica.style.height = "25%";
-    
-    // Transición individual de rotación
-    replica.style.transition = "none";
-    replica.style.transform = "scale(0.94) rotate(180deg)";
-    
-    animContainer.appendChild(replica);
-  });
-
-  // 3. Disparar la transición
   requestAnimationFrame(() => {
+    groupEl.style.transition = "transform 0.6s ease, opacity 0.6s ease";
+
     requestAnimationFrame(() => {
-      // Configurar transiciones con curvas cubic-bezier (spring bounce)
-      animContainer.style.transition = "transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.8s ease";
-      animContainer.style.transform = "rotate(0deg) scale(1)";
-      animContainer.style.opacity = "1";
+      groupEl.classList.add("is-active");
+      groupEl.style.opacity = "1";
+      groupEl.style.transform =
+        "translate(-50%, -50%) translateX(0) rotate(0deg)";
 
-      const replicas = animContainer.querySelectorAll(".replica-square");
-      replicas.forEach((replica) => {
-        replica.style.transition = "transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)";
-        replica.style.transform = "scale(0.94) rotate(0deg)";
-      });
-
-      // 4. Limpiar al finalizar la animación
       setTimeout(() => {
+        groupEl.classList.remove("is-active");
+        groupEl.style.opacity = "0";
         applyStateSet(nextSet);
-        animContainer.remove();
         if (onDone) onDone();
-      }, 850);
+      }, 700);
     });
   });
 }
@@ -593,7 +437,6 @@ function onMove(e) {
     lockTransition = true;
     animateTransition(state3On, state4On, () => {
       currentState = 4;
-      boardEl.classList.add("state-4");
       instructionEl.classList.add("hidden");
       lockTransition = false;
     });

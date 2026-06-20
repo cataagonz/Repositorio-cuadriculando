@@ -33,13 +33,13 @@ const HERO_DOTS = [
 
 const DESC_DOTS = [
   { id: 'd1', col: 3, row: 0, ox: 0.55, oy: 0.35 },
-  { id: 'd2', col: 0, row: 0, ox: 0.60, oy: 0.12 },
-  { id: 'd3', col: 2, row: 0, ox: 0.45, oy: 0.12 },
-  { id: 'd4', col: 1, row: 1, ox: 0.25, oy: 0.12 },
-  { id: 'd5', col: 0, row: 2, ox: 0.15, oy: 0.12 },
-  { id: 'd6', col: 2, row: 2, ox: 0.52, oy: 0.12 },
+  { id: 'd2', col: 0, row: 0, ox: 0.60, oy: 0.72 },
+  { id: 'd3', col: 2, row: 0, ox: 0.45, oy: 0.72 },
+  { id: 'd4', col: 1, row: 1, ox: 0.25, oy: 0.52 },
+  { id: 'd5', col: 0, row: 2, ox: 0.15, oy: 0.30 },
+  { id: 'd6', col: 2, row: 2, ox: 0.52, oy: 0.52 },
   { id: 'd7', col: 3, row: 2, ox: 0.62, oy: 0.60 },
-  { id: 'd8', col: 1, row: 2, ox: 0.40, oy: 0.12 }
+  { id: 'd8', col: 1, row: 2, ox: 0.40, oy: 0.78 }
 ];
 
 const FOOTER_DOTS = [
@@ -52,7 +52,6 @@ const FOOTER_DOTS = [
   { id: 'f7', col: 2, row: 2, ox: 0.38, oy: 0.68 },
   { id: 'f8', col: 3, row: 2, ox: 0.62, oy: 0.54 }
 ];
-
 
 const DESC_TEXTS = [
   { id: 'desc1', col: 0, span: 2.5, row: 0 },
@@ -271,8 +270,8 @@ function layoutSectionTitles(metrics) {
     if (!el) return;
 
     el.style.fontSize = `${Math.floor(metrics.cell * 0.40)}px`;
-    el.style.left = `${metrics.cx(col)}px`;
-    el.style.top = `${metrics.cy(row)}px`;
+    el.style.left = `${metrics.cx(col)}`;
+    el.style.top = `${metrics.cy(row)}`;
     el.style.width = `${metrics.cell * span}px`;
     el.style.height = `${metrics.cell}px`;
   });
@@ -372,38 +371,7 @@ function renderGallery() {
   });
 }
 
-function clearInlineStyles() {
-  const selectors = [
-    '.dot', '#hero-title', '.hero-sq', '.t-body', '.section-title',
-    '.cuad-block', '.cuad-text', '#s6-title', '#s6-arrow',
-    '.sep-row', '.sep-dot', '.carousel-wrap', '#s-gallery'
-  ];
-  selectors.forEach(selector => {
-    document.querySelectorAll(selector).forEach(el => {
-      el.style.left = '';
-      el.style.top = '';
-      el.style.width = '';
-      el.style.height = '';
-      el.style.fontSize = '';
-      el.style.transform = '';
-      el.style.opacity = '';
-      el.style.filter = '';
-    });
-  });
-}
-
 function updateBlocks(sectionId, progress) {
-  if (window.innerWidth <= 768) {
-    document.querySelectorAll(`#${sectionId} .cuad-block`).forEach(el => {
-      el.style.transform = '';
-    });
-    document.querySelectorAll(`#${sectionId} .cuad-text`).forEach(el => {
-      el.style.opacity = '';
-      el.style.filter = '';
-    });
-    return;
-  }
-
   const cell = getCellSize();
   const directions = BLOCK_DIRECTIONS[sectionId];
 
@@ -413,45 +381,15 @@ function updateBlocks(sectionId, progress) {
     const ty = cell * progress * dir.y;
     el.style.transform = `translate(${tx}px, ${ty}px)`;
   });
-
-  document.querySelectorAll(`#${sectionId} .cuad-text`).forEach(el => {
-    el.style.opacity = Math.min(1, progress * 1.1);
-    const blurVal = 8 * Math.pow(1 - progress, 2);
-    el.style.filter = blurVal > 0.1 ? `blur(${blurVal}px)` : 'none';
-  });
 }
 
-function updateScrollProgress(onlyActive = true) {
-  if (window.innerWidth <= 768) return;
-
-  Object.keys(sectionState).forEach(id => {
-    const state = sectionState[id];
-    if (onlyActive && !state.active) return;
-
-    const section = document.getElementById(id);
-    if (!section) return;
-
-    const rect = section.getBoundingClientRect();
-    const startY = window.innerHeight * 0.85;
-    const endY = window.innerHeight * 0.15;
-    const progress = Math.max(0, Math.min(1, (startY - rect.top) / (startY - endY)));
-
-    state.progress = progress;
-    updateBlocks(id, progress);
+function updateAllBlockAnimations() {
+  Object.entries(sectionState).forEach(([id, state]) => {
+    updateBlocks(id, state.progress);
   });
 }
 
 function layout() {
-  if (window.innerWidth <= 768) {
-    document.body.classList.add('is-mobile-view');
-    clearInlineStyles();
-    Object.keys(sectionState).forEach(id => {
-      updateBlocks(id, 0);
-    });
-    return;
-  }
-
-  document.body.classList.remove('is-mobile-view');
   const metrics = getMetrics();
 
   const gallerySection = document.getElementById('s-gallery');
@@ -470,7 +408,7 @@ function layout() {
   layoutSection6(metrics);
   layoutSeparators(metrics);
   layoutGallery(metrics);
-  updateScrollProgress(false);
+  updateAllBlockAnimations();
 }
 
 function setupCursor() {
@@ -514,12 +452,9 @@ function setupSectionObserver() {
     entries.forEach(entry => {
       if (sectionState[entry.target.id]) {
         sectionState[entry.target.id].active = entry.isIntersecting;
-        if (entry.isIntersecting) {
-          updateScrollProgress(false);
-        }
       }
     });
-  }, { threshold: 0.05 });
+  }, { threshold: 0.6 });
 
   ['s3', 's4', 's5'].forEach(id => {
     const section = document.getElementById(id);
@@ -528,9 +463,24 @@ function setupSectionObserver() {
 }
 
 function setupScrollAnimation() {
-  window.addEventListener('scroll', () => {
-    updateScrollProgress(true);
-  }, { passive: true });
+  window.addEventListener('wheel', event => {
+    const activeEntry = Object.entries(sectionState).find(([, state]) => state.active);
+    if (!activeEntry) return;
+
+    const [sectionId, state] = activeEntry;
+    const nextDelta = Math.max(0, Math.min(CONFIG.scrollRange, state.delta + event.deltaY));
+    const nextProgress = nextDelta / CONFIG.scrollRange;
+
+    const blockedDown = state.progress >= 1 && event.deltaY > 0;
+    const blockedUp = state.progress <= 0 && event.deltaY < 0;
+
+    if (blockedDown || blockedUp) return;
+
+    event.preventDefault();
+    state.delta = nextDelta;
+    state.progress = nextProgress;
+    updateBlocks(sectionId, state.progress);
+  }, { passive: false });
 }
 
 function setupLightbox() {
@@ -610,15 +560,6 @@ function bindHeroSquareHover() {
   });
 }
 
-function setupMobileCards() {
-  document.addEventListener('click', event => {
-    const card = event.target.closest('.mobile-card');
-    if (card && window.innerWidth <= 768) {
-      card.classList.toggle('is-revealed');
-    }
-  });
-}
-
 function init() {
   renderGallery();
   layout();
@@ -628,10 +569,8 @@ function init() {
   setupSectionObserver();
   setupScrollAnimation();
   bindHeroSquareHover();
-  setupMobileCards();
   window.addEventListener('resize', layout);
-  updateScrollProgress(false);
 }
 
-document.addEventListener('DOMContentLoaded', init);
 
+document.addEventListener('DOMContentLoaded', init);
