@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Inter:wght@400;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=5.0">
 </head>
 <body>
 
@@ -18,9 +18,6 @@
   </a>
   <a href="#s2" class="side-index__btn c-amarillo" aria-label="Presentación">
     <span class="side-index__label">Presentación</span>
-  </a>
-  <a href="#s-3d" class="side-index__btn c-rojo" aria-label="Tablero 3D">
-    <span class="side-index__label">Tablero 3D</span>
   </a>
   <a href="#sG" class="side-index__btn c-azul" aria-label="Gestualidad">
     <span class="side-index__label">Gestualidad</span>
@@ -36,6 +33,9 @@
   </a>
   <a href="#s-gallery" class="side-index__btn c-amarillo" aria-label="Galería">
     <span class="side-index__label">Galería</span>
+  </a>
+  <a href="#s-video" class="side-index__btn c-rojo" aria-label="Video">
+    <span class="side-index__label">Video</span>
   </a>
   <a href="#sP" class="side-index__btn c-azul" aria-label="PIX">
     <span class="side-index__label">PIX</span>
@@ -76,7 +76,6 @@
     <span class="hero-letter hover-verde">O</span>
   </h1>
 
-  <!-- Cuadros de color alineados a la grilla, misma “fila” que el título -->
   <div class="hero-sq-container">
     <div id="sq1" class="hero-sq sq-verde"></div>
     <div id="sq2" class="hero-sq sq-amarillo"></div>
@@ -112,19 +111,6 @@
     <div class="dot dot-amarillo" id="d6"></div>
     <div class="dot dot-verde" id="d7"></div>
     <div class="dot dot-azul" id="d8"></div>
-  </section>
-
-  <!-- TABLERO 3D -->
-  <section class="screen" id="s-3d">
-    <div id="canvas-3d"></div>
-    <div class="controls-3d" aria-label="Controles del visor 3D">
-      <button class="btn-3d is-active" id="btn-3d-rotate" type="button" aria-label="Rotación automática">Auto Gira</button>
-      <button class="btn-3d" id="btn-3d-top" type="button" aria-label="Vista superior">Cenital</button>
-      <button class="btn-3d" id="btn-3d-persp" type="button" aria-label="Vista perspectiva">Perspectiva</button>
-    </div>
-    <div class="hint-3d" aria-hidden="true">
-      <p>Arrastra para girar el tablero e inspeccionar sus detalles constructivos</p>
-    </div>
   </section>
 
   <!-- GESTUALIDAD -->
@@ -285,21 +271,43 @@
     <span class="sep-dot dot-rojo"></span>
   </div>
 
+  <!-- VIDEO -->
+  <h2 class="t-title center-title" id="s-video-title">VIDEO</h2>
+  <section class="screen video-section" id="s-video">
+    <div class="video-wrap">
+      <div class="video-container">
+        <iframe 
+          src="https://www.youtube.com/embed/Xtd3U6Iv9UY" 
+          title="Video de Cuadriculando"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep-row">
+    <span class="sep-dot dot-verde"></span>
+    <span class="sep-dot dot-amarillo"></span>
+    <span class="sep-dot dot-azul"></span>
+    <span class="sep-dot dot-rojo"></span>
+  </div>
+
   <!-- PIX -->
   <h2 class="t-title center-title" id="sP-title">PIX</h2>
   <section class="screen pix-section" id="sP">
     <div class="pix-wrap">
       <iframe
-        src="https://eadpucv.github.io/pix/#!/import/eyJ0aXRsZSI6IkV4cGVyaWVuY2lhIGN1YWRyaWN1bGFuZG8iLCJsYXlvdXQiOiJwaXgiLCJkZXNjcmlwdGlvbiI6IkVsIGp1ZWdvIHNlIHJlYWxpemEgY29uIHVuIGdydXBvIGRlIDQgcGVyc29uYXMsIHF1aWVuZXMganVlZ2FuIGNvbiBlbCBvYmpldGl2byBkZSBjb2xvY2FyIHByaW1lcm8gc3VzIDE2IGN1YWRyb3MgZW4gc3UgcHJvcGlhIGN1YWRyw61jdWxhLiIsInNjb3JlcyI6W10sInN1cHBvcnRzIjpbXX0="
+        src="https://eadpucv.github.io/pix/#!/import/eyJ0aXRsZSI6IkV4cGVyaWVuY2lhIGN1YWRyaWN1bGFuZG8iLCJsYXlvdXQiOiJwaXgiLCJkZXNjcmlwdGlvbiI6IkVsIGp1ZWdvIHNlIHJlYWxpemEgY29uIHVuIGdydXBvIGRlIDQgcGVyc29uYXMsIHF1aWVuZXMganVlZ2FuIGNvbiBlbCBvYmpldGl2byBkZSBjb2xvY2FyIHByaW1lcm8gc3VzIDE2IGN1YWRyb3MgZW4gc3UgcHJvcGlhIGN1YWRyw61jdWxhLiIsInNjb3JlcyI6W1t7InN0ZXBfdGl0bGUiOiIiLCJ1c2VyIjoicGl4LWludHJpZ3VlZCDCv0N1w6FudG9zIHB1bnRvcyB0ZW5nbz8iLCJkaWFsb2d1ZSI6InBpeC1zdGFjayBDdWVudGEgZWwgcHVudGFqZSBkZSBzdXMgY2FydGFzLiIsInN5c3RlbSI6InBpeC1maWxlIEFsIGluaWNpYXIgc2UgZW50cmVnYXLDoW4gNSBjYXJ0YXMgZGUgcHVudGFqZSIsIm5vdGUiOiIiLCJlbnZpcm9ubWVudCI6IiIsInN1cHBvcnRpbmdfcHJvY2Vzc2VzIjoiIn0seyJzdGVwX3RpdGxlIjoiIiwidXNlciI6IiIsImRpYWxvZ3VlIjoicGl4LWNsb2NrIEdpcmEgbGEgcnVsZXRhIiwic3lzdGVtIjoicGl4LXRhcDNyaWdodCBMYSBydWxldGEgaW5kaWNhIGN1YW50b3MgZXNwYWNpb3Mgc2UgYXZhbnphIiwibm90ZSI6IiIsImVudmlyb25tZW50IjoiIiwic3VwcG9ydGluZ19wcm9jZXNzZXMiOiIifSx7InN0ZXBfdGl0bGUiOiIiLCJ1c2VyIjoicGl4LXRoaW5rIENhw60gZW4gcHVudGFqZSwgYWhvcmEgbWUgYWxjYW56YW4gbG9zIHB1bnRvcyBwYXJhIGN1YWRyaWN1bGFyIiwiZGlhbG9ndWUiOiJwaXgtZmlsZSBNdWVzdHJhIHN1IHB1bnRhamUgeSBjdWFkcmljdWxhIiwic3lzdGVtIjoicGl4LWVtcHR5IExhIGN1YWRyw61jdWxhIHBlcnNvbmFsIGVzdMOhIG9jdWx0YSBkZWJham8gZGVsIHRhYmxlcm8uIiwibm90ZSI6IiIsImVudmlyb25tZW50IjoiIiwic3VwcG9ydGluZ19wcm9jZXNzZXMiOiIifSx7InN0ZXBfdGl0bGUiOiIiLCJ1c2VyIjoicGl4LXRoaW5rIEVsIGp1Z2Fkb3IgZGUgYWwgbGFkbyB5YSBjb21wbGV0byBkb3MgbMOtbmVhcyBkZSBzdSB0ZXJyaXRvcmlvLiIsImRpYWxvZ3VlIjoicGl4LXZpZXcgRWwganVnYWRvciBvYnNlcnZhIGTDs25kZSBjYWUgeSBjdcOhbmRvIGNvbXByYW4gc3VzIGVuZW1pZ29zLiIsInN5c3RlbSI6IiIsIm5vdGUiOiJMb3MganVnYWRvcmVzIGVzdMOhbiBhdGVudG9zIGEgZG9uZGUgY29tcHJhbiBsb3MgZGVtw6FzIHBhcmEgbHVlZ28gdXRpbGl6YXJsbyBjb21vIGVzdHJhdGVnaWEuIiwiZW52aXJvbm1lbnQiOiIiLCJzdXBwb3J0aW5nX3Byb2Nlc3NlcyI6IiJ9LHsic3RlcF90aXRsZSI6IkVzdHJhdGVnaWEiLCJ1c2VyIjoicGl4LXRoaW5rIFNhcXXDqSB1bmEgY2FydGEgREVNT0xFUi4gRWxpam8gYWwgb3BvbmVudGUgYW1hcmlsbG8iLCJkaWFsb2d1ZSI6InBpeC1jYW5jZWwgQ29sb2NhIHVuIGN1YWRybyBkZSBhdGFxdWUiLCJzeXN0ZW0iOiJwaXgtZW1wdHkgTG9zIGN1YWRyb3MgZGUgYXRhcXVlIHF1ZWRhbiBmaWpvcyBhIGxhcyB0YXBhcyBpbWFudGFkYXMuIiwibm90ZSI6IiIsImVudmlyb25tZW50IjoiIiwic3VwcG9ydGluZ19wcm9jZXNzZXMiOiIifSx7InN0ZXBfdGl0bGUiOiJBY3RvIiwidXNlciI6InBpeC1oYXBweSBTaSBlc3RhYmEgY3VhZHJpY3VsYWRvIGVzZSBlc3BhY2lvIHkgbG8gcHVkZSBkZW1vbGVyIiwiZGlhbG9ndWUiOiJwaXgta2lvc2sgRWwgb3BvbmVudGUgcmV0aXJhIGVsIGN1YWRybyBjb3JyZXNwb25kaWVudGUuIiwic3lzdGVtIjoicGl4LWVtcHR5IEFsIG5vIHBvZGVyIHZlciBsYSBjdWFkcmljdWxhIG9wb25lbnRlIG5vIHNlIHNhYmUgc2kgcmVhbG1lbnRlIGRlbW9sZXLDoSIsIm5vdGUiOiIiLCJlbnZpcm9ubWVudCI6IiIsInN1cHBvcnRpbmdfcHJvY2Vzc2VzIjoiIn0seyJzdGVwX3RpdGxlIjoiRXN0cmF0ZWdpYSIsInVzZXIiOiJwaXgtc2F5IFNhcXXDqSB1bmEgY2FydGEgRVNQSUFSLiBFbGlqbyBhbCBvcG9uZW50ZSByb2pvIiwiZGlhbG9ndWUiOiJwaXgtZ2FsbGVyeSBEZXN0YXBhIGVsIHRhYmxlcm8gZGVsIG9wb25lbnRlIHJvam8geSBvYnNlcnZhIiwic3lzdGVtIjoicGl4LXJlc2l6ZSBFbCB0YWJsZXJvIGN1ZW50YSBjb24gdGFwYXMgZGVzbGl6YW50ZXMgcXVlIHBlcm1pdGVuIG9jdWx0YXIgeSBtb3N0cmFyIGxhcyBmaWNoYXMuIiwibm90ZSI6IiIsImVudmlyb25tZW50IjoiIiwic3VwcG9ydGluZ19wcm9jZXNzZXMiOiIifSx7InN0ZXBfdGl0bGUiOiJBY3RvIiwidXNlciI6InBpeC1pbnRyaWd1ZWQgQWhvcmEgc2UgZMOzbmRlIHRpZW5lIGN1YWRyaWN1bGFkbywgcG9kcsOtYSBkZW1vbGVyIiwiZGlhbG9ndWUiOiJwaXgtdGFwM3JpZ2h0IEF2YW56YSBoYXN0YSBsbGVnYXIgYWwgdGVycml0b3JpbyBvcG9uZW50ZSB5IGRlbXVlbGUgdW4gY3VhZHJvIiwic3lzdGVtIjoicGl4LWNhbmNlbCBQYWdhIDUgcHVudG9zIHkgdXRpbGl6YSB1biBjdWFkcm8gZGUgYXRhcXVlLiIsIm5vdGUiOiIiLCJlbnZpcm9ubWVudCI6IiIsInN1cHBvcnRpbmdfcHJvY2Vzc2VzIjoiIn0seyJzdGVwX3RpdGxlIjoiUmV2ZWxhY2nDs24iLCJ1c2VyIjoicGl4LXRoaW5rIE5lY2VzaXRvIGNhZXIgZW4gbWkgaW5pY2lvLCBzb2xvIG1lIGZhbHRhIHVuIGN1YWRybyBjZW50cmFsIiwiZGlhbG9ndWUiOiIiLCJzeXN0ZW0iOiIiLCJub3RlIjoiTG9zIGp1Z2Fkb3JlcyBzaWVudGVuIHRlbnNpw7NuIGN1YW5kbyBzb2xvIGxlcyBmYWx0YSB1biDDumx0aW1vIGN1YWRyby4gTXVjaGFzIGNvc2FzIHB1ZWRlbiBwYXNhciBlbiBlc2UgbW9tZW50byBwb3IgbG8gcXVlIGxhIHN1ZXJ0ZSB5IGxhcyBkZWNpc2lvbmVzIGRlIGxvcyBvcG9uZW50ZXMgZGVmaW5lbiBlbCBmaW5hbCBkZWwganVlZ28uIiwiZW52aXJvbm1lbnQiOiIiLCJzdXBwb3J0aW5nX3Byb2Nlc3NlcyI6IiJ9LHsic3RlcF90aXRsZSI6IiIsInVzZXIiOiJwaXgtaGFwcHkgTG9ncsOpIGNvbXBsZXRhciBtaSBjdWFkcmljdWxhIiwiZGlhbG9ndWUiOiJwaXgtZ2FsbGVyeSBFbCBqdWdhZG9yIHJldmVsYSBzdSBjdWFkcmljdWxhIGNvbXBsZXRhIiwic3lzdGVtIjoiIiwibm90ZSI6IiIsImVudmlyb25tZW50IjoiIiwic3VwcG9ydGluZ19wcm9jZXNzZXMiOiIifV1dfQ=="
         width="100%"
-        height="520"
+        height="820"
         frameborder="0">
       </iframe>
     </div>
   </section>
 
   <!-- EXPERIENCIA -->
-  <section class="screen" id="s6" onclick="window.open('experimental.html', '_blank')">
+  <section class="screen" id="s6" onclick="window.open('experimental.html?v=25.0', '_blank')">
     <h2 class="t-title interactive-title" id="s6-title">
       <span class="text-default">PRUEBA LA EXPERIENCIA</span>
       <span class="text-hover">NO TE CONFÍES</span>
@@ -341,13 +349,79 @@
   <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
   <div class="lightbox-content">
     <img id="lightbox-image" src="" alt="Vista ampliada">
+    <div id="lightbox-3d-container" style="display: none; width: 100%; height: 100%; position: relative;">
+      <div class="controls-3d" aria-label="Controles del visor 3D">
+        <button class="btn-3d is-active" id="btn-3d-rotate" type="button" aria-label="Rotación automática">Auto Gira</button>
+        <button class="btn-3d" id="btn-3d-top" type="button" aria-label="Vista superior">Cenital</button>
+        <button class="btn-3d" id="btn-3d-persp" type="button" aria-label="Vista perspectiva">Perspectiva</button>
+      </div>
+      <div class="hint-3d" aria-hidden="true">
+        <p>Arrastra para girar el tablero e inspeccionar sus detalles constructivos</p>
+      </div>
+    </div>
+    <div id="lightbox-box3d-container" style="display: none; width: 100%; height: 100%; position: relative;">
+      <div class="controls-3d" aria-label="Controles del visor de la caja 3D">
+        <button class="btn-3d is-active" id="btn-box3d-rotate" type="button" aria-label="Rotación automática">Auto Gira</button>
+        <button class="btn-3d" id="btn-box3d-top" type="button" aria-label="Vista superior">Cenital</button>
+        <button class="btn-3d" id="btn-box3d-persp" type="button" aria-label="Vista perspectiva">Perspectiva</button>
+      </div>
+      <div class="hint-3d" aria-hidden="true">
+        <p>Arrastra para girar la caja e inspeccionar sus detalles</p>
+      </div>
+    </div>
+    <div id="lightbox-cards3d-container" style="display: none; width: 100%; height: 100%; position: relative;">
+      <div class="controls-3d" aria-label="Controles del visor de la caja de cartas 3D">
+        <button class="btn-3d is-active" id="btn-cards3d-rotate" type="button" aria-label="Rotación automática">Auto Gira</button>
+        <button class="btn-3d" id="btn-cards3d-top" type="button" aria-label="Vista superior">Cenital</button>
+        <button class="btn-3d" id="btn-cards3d-persp" type="button" aria-label="Vista perspectiva">Perspectiva</button>
+      </div>
+      <div class="hint-3d" aria-hidden="true">
+        <p>Arrastra para girar la caja de cartas y haz clic en ella para abrirla o cerrarla</p>
+      </div>
+    </div>
+    <div id="lightbox-ruleta3d-container" style="display: none; width: 100%; height: 100%; position: relative;">
+      <div class="controls-3d" aria-label="Controles del visor de la ruleta 3D">
+        <button class="btn-3d is-active" id="btn-ruleta3d-rotate" type="button" aria-label="Rotación automática">Auto Gira</button>
+        <button class="btn-3d" id="btn-ruleta3d-top" type="button" aria-label="Vista frontal">Frontal</button>
+        <button class="btn-3d" id="btn-ruleta3d-persp" type="button" aria-label="Vista perspectiva">Perspectiva</button>
+        <button class="btn-3d" id="btn-ruleta3d-spin" type="button" aria-label="Girar ruleta" style="background-color: #d23434; color: white; border-color: #d23434;">¡Girar!</button>
+      </div>
+      <div class="hint-3d" aria-hidden="true">
+        <p>Arrastra para girar la ruleta y haz clic en ella o pulsa Girar para hacerla girar</p>
+      </div>
+    </div>
+    <div id="lightbox-cuadriculas3d-container" style="display: none; width: 100%; height: 100%; position: relative;">
+      <div class="controls-3d" aria-label="Controles del visor de las cuadrículas 3D">
+        <button class="btn-3d is-active" id="btn-cuadriculas3d-rotate" type="button" aria-label="Rotación automática">Auto Gira</button>
+        <button class="btn-3d" id="btn-cuadriculas3d-top" type="button" aria-label="Vista frontal">Frontal</button>
+        <button class="btn-3d" id="btn-cuadriculas3d-persp" type="button" aria-label="Vista perspectiva">Perspectiva</button>
+      </div>
+      <div class="hint-3d" aria-hidden="true">
+        <p>Arrastra para girar las cuadrículas o haz clic en ellas para ver la siguiente</p>
+      </div>
+    </div>
+    <div id="lightbox-pieces3d-container" style="display: none; width: 100%; height: 100%; position: relative;">
+      <div class="controls-3d" aria-label="Controles del visor de las fichas especiales 3D">
+        <button class="btn-3d is-active" id="btn-pieces3d-rotate" type="button" aria-label="Rotación automática">Auto Gira</button>
+        <button class="btn-3d" id="btn-pieces3d-top" type="button" aria-label="Vista frontal">Frontal</button>
+        <button class="btn-3d" id="btn-pieces3d-persp" type="button" aria-label="Vista perspectiva">Perspectiva</button>
+      </div>
+      <div class="hint-3d" aria-hidden="true">
+        <p>Arrastra para girar las piezas o haz clic en la pila para agruparlas o esparcirlas</p>
+      </div>
+    </div>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-<script src="board3d.js?v=8.0" defer></script>
-<script src="script.js" defer></script>
+<script src="board3d.js?v=30.0" defer></script>
+<script src="box3d.js?v=3.0" defer></script>
+<script src="cards3d.js?v=7.0" defer></script>
+<script src="ruleta3d.js?v=4.0" defer></script>
+<script src="cuadriculas3d.js?v=3.0" defer></script>
+<script src="pieces3d.js?v=1.0" defer></script>
+<script src="script.js?v=7.0" defer></script>
 
 <script>
   const sections = document.querySelectorAll('section[id]');

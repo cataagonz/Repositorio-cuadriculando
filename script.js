@@ -8,10 +8,9 @@ const CONFIG = {
 const GALLERY_IMAGES = [
   'Assets/Imagen caja 1.png',
   'Assets/Imagen tablero 1.png',
-  'Assets/Imagen cartas 1.png',
-  'Assets/Imagen paleta 1.png',
   'Assets/Cuadriculas 1.png',
   'Assets/ruleta 1..png',
+  'Assets/Imagen cartas 1.png',
   'Assets/piezas especiales 1.png',
   'Assets/foto8.jpg',
   'Assets/foto9.jpg',
@@ -52,7 +51,6 @@ const FOOTER_DOTS = [
   { id: 'f7', col: 2, row: 2, ox: 0.38, oy: 0.68 },
   { id: 'f8', col: 3, row: 2, ox: 0.62, oy: 0.54 }
 ];
-
 
 const DESC_TEXTS = [
   { id: 'desc1', col: 0, span: 2.5, row: 0 },
@@ -95,6 +93,7 @@ const sectionState = {
 
 const cursorSq = document.getElementById('cursor-sq');
 const gridOverlay = document.getElementById('grid-overlay');
+const heroTitle = document.getElementById('hero-title');
 
 function getCellSize() {
   return Math.floor(
@@ -181,50 +180,36 @@ function layoutHero(metrics) {
   const title = document.getElementById('hero-title');
   if (!title) return;
 
-  // --- TÍTULO ---
-
   const titleSize = Math.floor(metrics.cell * 0.80);
   title.style.fontSize = `${titleSize}px`;
   title.style.left = `${metrics.offX}px`;
   title.style.width = `${metrics.gridW}px`;
   title.style.top = `${Math.floor(metrics.cy(1) + metrics.cell * 0.20)}px`;
 
-  // --- CUADRITOS SOBRE EL TÍTULO ---
-
-  // Un poco más grandes para que rellenen bien la “ventana” de la letra
   const sqSize = Math.floor(metrics.cell * 0.17);
   const titleTop = parseInt(title.style.top, 10) || metrics.cy(1);
   const titleHeight = title.offsetHeight || Math.floor(metrics.cell * 0.55);
 
-  // Partimos desde tus posiciones originales y las afinamos
   const squares = [
-    // Verde sobre la C inicial (sq1)
     {
       id: 'sq1',
-      // antes: left: metrics.offX - 160, top: titleTop + titleHeight * 0.12
-      left: metrics.offX - 159,                       // un poco más hacia la derecha
-      top:  titleTop + titleHeight * 0.12             // un poco más arriba
+      left: metrics.offX - 159,
+      top: titleTop + titleHeight * 0.12
     },
-    // Amarillo sobre la letra central (sq2)
     {
       id: 'sq2',
-      // antes: metrics.offX + metrics.gridW * 0.316, top: titleTop + titleHeight * 0.60
       left: metrics.offX + metrics.gridW * 0.320 - sqSize * 0.05,
-      top:  titleTop + titleHeight * 0.64 - sqSize * 0.10
+      top: titleTop + titleHeight * 0.64 - sqSize * 0.10
     },
-    // Azul sobre la parte central (sq3)
     {
       id: 'sq3',
-      // antes: metrics.offX + metrics.gridW * 0.529, top: titleTop + titleHeight * 0.11
       left: metrics.offX + metrics.gridW * 0.532 - sqSize * 0.06,
-      top:  titleTop + titleHeight * 0.13 - sqSize * 0.09
+      top: titleTop + titleHeight * 0.13 - sqSize * 0.09
     },
-    // Rojo sobre la N (sq4)
     {
       id: 'sq4',
-      // antes: metrics.offX + metrics.gridW * 0.94, top: titleTop + titleHeight * 0.12
       left: metrics.offX + metrics.gridW * 0.94 - sqSize * 0.08,
-      top:  titleTop + titleHeight * 0.09 - sqSize * 0.10
+      top: titleTop + titleHeight * 0.09 - sqSize * 0.10
     }
   ];
 
@@ -350,6 +335,91 @@ function renderGallery() {
 
   GALLERY_IMAGES.forEach((src, index) => {
     const slide = document.createElement('article');
+
+    if (src === 'Assets/Imagen caja 1.png') {
+      slide.className = 'gallery-slide box-3d-slide';
+      slide.id = 'box-3d-slide';
+      slide.setAttribute('tabindex', '0');
+      slide.setAttribute('role', 'button');
+      slide.setAttribute('aria-label', `Ver modelo 3D de la caja de cerca`);
+
+      const canvasContainer = document.createElement('div');
+      canvasContainer.id = 'canvas-box3d';
+      slide.appendChild(canvasContainer);
+      track.appendChild(slide);
+      return;
+    }
+
+    if (src === 'Assets/Imagen tablero 1.png') {
+      slide.className = 'gallery-slide board-3d-slide';
+      slide.id = 'board-3d-slide';
+      slide.setAttribute('tabindex', '0');
+      slide.setAttribute('role', 'button');
+      slide.setAttribute('aria-label', `Ver modelo 3D del tablero de cerca`);
+
+      const canvasContainer = document.createElement('div');
+      canvasContainer.id = 'canvas-3d';
+      slide.appendChild(canvasContainer);
+      track.appendChild(slide);
+      return;
+    }
+
+    if (src === 'Assets/Imagen cartas 1.png') {
+      slide.className = 'gallery-slide cards-3d-slide';
+      slide.id = 'cards-3d-slide';
+      slide.setAttribute('tabindex', '0');
+      slide.setAttribute('role', 'button');
+      slide.setAttribute('aria-label', `Ver modelo 3D de la caja de cartas de cerca`);
+
+      const canvasContainer = document.createElement('div');
+      canvasContainer.id = 'canvas-cards3d';
+      slide.appendChild(canvasContainer);
+      track.appendChild(slide);
+      return;
+    }
+
+    if (src === 'Assets/ruleta 1..png') {
+      slide.className = 'gallery-slide ruleta-3d-slide';
+      slide.id = 'ruleta-3d-slide';
+      slide.setAttribute('tabindex', '0');
+      slide.setAttribute('role', 'button');
+      slide.setAttribute('aria-label', `Ver modelo 3D de la ruleta de cerca`);
+
+      const canvasContainer = document.createElement('div');
+      canvasContainer.id = 'canvas-ruleta3d';
+      slide.appendChild(canvasContainer);
+      track.appendChild(slide);
+      return;
+    }
+
+    if (src === 'Assets/Cuadriculas 1.png') {
+      slide.className = 'gallery-slide cuadriculas-3d-slide';
+      slide.id = 'cuadriculas-3d-slide';
+      slide.setAttribute('tabindex', '0');
+      slide.setAttribute('role', 'button');
+      slide.setAttribute('aria-label', `Ver modelo 3D de las cuadrículas de colores de cerca`);
+
+      const canvasContainer = document.createElement('div');
+      canvasContainer.id = 'canvas-cuadriculas3d';
+      slide.appendChild(canvasContainer);
+      track.appendChild(slide);
+      return;
+    }
+
+    if (src === 'Assets/piezas especiales 1.png') {
+      slide.className = 'gallery-slide pieces-3d-slide';
+      slide.id = 'pieces-3d-slide';
+      slide.setAttribute('tabindex', '0');
+      slide.setAttribute('role', 'button');
+      slide.setAttribute('aria-label', `Ver modelo 3D de las piezas especiales de cerca`);
+
+      const canvasContainer = document.createElement('div');
+      canvasContainer.id = 'canvas-pieces3d';
+      slide.appendChild(canvasContainer);
+      track.appendChild(slide);
+      return;
+    }
+
     slide.className = 'gallery-slide';
     slide.dataset.full = src;
     slide.setAttribute('tabindex', '0');
@@ -378,6 +448,7 @@ function clearInlineStyles() {
     '.cuad-block', '.cuad-text', '#s6-title', '#s6-arrow',
     '.sep-row', '.sep-dot', '.carousel-wrap', '#s-gallery'
   ];
+
   selectors.forEach(selector => {
     document.querySelectorAll(selector).forEach(el => {
       el.style.left = '';
@@ -543,6 +614,16 @@ function setupLightbox() {
   if (!lightbox || !lightboxImage || !track) return;
 
   function openLightbox(src, alt = 'Vista ampliada') {
+    const container3d = document.getElementById('lightbox-3d-container');
+    if (container3d) container3d.style.display = 'none';
+    const containerBox3d = document.getElementById('lightbox-box3d-container');
+    if (containerBox3d) containerBox3d.style.display = 'none';
+    const containerCards3d = document.getElementById('lightbox-cards3d-container');
+    if (containerCards3d) containerCards3d.style.display = 'none';
+    const containerRuleta3d = document.getElementById('lightbox-ruleta3d-container');
+    if (containerRuleta3d) containerRuleta3d.style.display = 'none';
+    lightboxImage.style.display = 'block';
+
     lightboxImage.src = src;
     lightboxImage.alt = alt;
     lightbox.classList.add('is-open');
@@ -550,29 +631,281 @@ function setupLightbox() {
     document.body.style.overflow = 'hidden';
   }
 
+  function hideAll3DContainers() {
+    const ids = [
+      'lightbox-3d-container',
+      'lightbox-box3d-container',
+      'lightbox-cards3d-container',
+      'lightbox-ruleta3d-container',
+      'lightbox-cuadriculas3d-container',
+      'lightbox-pieces3d-container'
+    ];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+  }
+
+  function open3DLightbox() {
+    hideAll3DContainers();
+    const container3d = document.getElementById('lightbox-3d-container');
+    const canvas3d = document.getElementById('canvas-3d');
+    if (!container3d || !canvas3d) return;
+
+    lightboxImage.style.display = 'none';
+    container3d.style.display = 'block';
+    container3d.appendChild(canvas3d);
+
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    if (window.Board3D) {
+      window.Board3D.setMode(true);
+      window.Board3D.resize();
+    }
+  }
+
+  function openBox3DLightbox() {
+    hideAll3DContainers();
+    const containerBox3d = document.getElementById('lightbox-box3d-container');
+    const canvasBox3d = document.getElementById('canvas-box3d');
+    if (!containerBox3d || !canvasBox3d) return;
+
+    lightboxImage.style.display = 'none';
+    containerBox3d.style.display = 'block';
+    containerBox3d.appendChild(canvasBox3d);
+
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    if (window.Box3D) {
+      window.Box3D.setMode(true);
+      window.Box3D.resize();
+    }
+  }
+
+  function openCards3DLightbox() {
+    hideAll3DContainers();
+    const containerCards3d = document.getElementById('lightbox-cards3d-container');
+    const canvasCards3d = document.getElementById('canvas-cards3d');
+    if (!containerCards3d || !canvasCards3d) return;
+
+    lightboxImage.style.display = 'none';
+    containerCards3d.style.display = 'block';
+    containerCards3d.appendChild(canvasCards3d);
+
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    if (window.Cards3D) {
+      window.Cards3D.setMode(true);
+      window.Cards3D.resize();
+    }
+  }
+
+  function openRuleta3DLightbox() {
+    hideAll3DContainers();
+    const containerRuleta3d = document.getElementById('lightbox-ruleta3d-container');
+    const canvasRuleta3d = document.getElementById('canvas-ruleta3d');
+    if (!containerRuleta3d || !canvasRuleta3d) return;
+
+    lightboxImage.style.display = 'none';
+    containerRuleta3d.style.display = 'block';
+    containerRuleta3d.appendChild(canvasRuleta3d);
+
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    if (window.Ruleta3D) {
+      window.Ruleta3D.setMode(true);
+      window.Ruleta3D.resize();
+    }
+  }
+
+  function openCuadriculas3DLightbox() {
+    hideAll3DContainers();
+    const containerCuadriculas3d = document.getElementById('lightbox-cuadriculas3d-container');
+    const canvasCuadriculas3d = document.getElementById('canvas-cuadriculas3d');
+    if (!containerCuadriculas3d || !canvasCuadriculas3d) return;
+
+    lightboxImage.style.display = 'none';
+    containerCuadriculas3d.style.display = 'block';
+    containerCuadriculas3d.appendChild(canvasCuadriculas3d);
+
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    if (window.Cuadriculas3D) {
+      window.Cuadriculas3D.setMode(true);
+      window.Cuadriculas3D.resize();
+    }
+  }
+
+  function openPieces3DLightbox() {
+    hideAll3DContainers();
+    const containerPieces3d = document.getElementById('lightbox-pieces3d-container');
+    const canvasPieces3d = document.getElementById('canvas-pieces3d');
+    if (!containerPieces3d || !canvasPieces3d) return;
+
+    lightboxImage.style.display = 'none';
+    containerPieces3d.style.display = 'block';
+    containerPieces3d.appendChild(canvasPieces3d);
+
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    if (window.Pieces3D) {
+      window.Pieces3D.setMode(true);
+      window.Pieces3D.resize();
+    }
+  }
+
   function closeLightbox() {
     lightbox.classList.remove('is-open');
     lightbox.setAttribute('aria-hidden', 'true');
     lightboxImage.src = '';
     document.body.style.overflow = '';
+
+    const container3d = document.getElementById('lightbox-3d-container');
+    const canvas3d = document.getElementById('canvas-3d');
+    const slide3d = document.getElementById('board-3d-slide');
+    if (container3d && canvas3d && slide3d && container3d.style.display === 'block') {
+      slide3d.appendChild(canvas3d);
+      container3d.style.display = 'none';
+      if (window.Board3D) {
+        window.Board3D.setMode(false);
+        window.Board3D.resize();
+      }
+    }
+
+    const containerBox3d = document.getElementById('lightbox-box3d-container');
+    const canvasBox3d = document.getElementById('canvas-box3d');
+    const slideBox3d = document.getElementById('box-3d-slide');
+    if (containerBox3d && canvasBox3d && slideBox3d && containerBox3d.style.display === 'block') {
+      slideBox3d.appendChild(canvasBox3d);
+      containerBox3d.style.display = 'none';
+      if (window.Box3D) {
+        window.Box3D.setMode(false);
+        window.Box3D.resize();
+      }
+    }
+
+    const containerCards3d = document.getElementById('lightbox-cards3d-container');
+    const canvasCards3d = document.getElementById('canvas-cards3d');
+    const slideCards3d = document.getElementById('cards-3d-slide');
+    if (containerCards3d && canvasCards3d && slideCards3d && containerCards3d.style.display === 'block') {
+      slideCards3d.appendChild(canvasCards3d);
+      containerCards3d.style.display = 'none';
+      if (window.Cards3D) {
+        window.Cards3D.setMode(false);
+        window.Cards3D.resize();
+      }
+    }
+
+    const containerRuleta3d = document.getElementById('lightbox-ruleta3d-container');
+    const canvasRuleta3d = document.getElementById('canvas-ruleta3d');
+    const slideRuleta3d = document.getElementById('ruleta-3d-slide');
+    if (containerRuleta3d && canvasRuleta3d && slideRuleta3d && containerRuleta3d.style.display === 'block') {
+      slideRuleta3d.appendChild(canvasRuleta3d);
+      containerRuleta3d.style.display = 'none';
+      if (window.Ruleta3D) {
+        window.Ruleta3D.setMode(false);
+        window.Ruleta3D.resize();
+      }
+    }
+
+    const containerCuadriculas3d = document.getElementById('lightbox-cuadriculas3d-container');
+    const canvasCuadriculas3d = document.getElementById('canvas-cuadriculas3d');
+    const slideCuadriculas3d = document.getElementById('cuadriculas-3d-slide');
+    if (containerCuadriculas3d && canvasCuadriculas3d && slideCuadriculas3d && containerCuadriculas3d.style.display === 'block') {
+      slideCuadriculas3d.appendChild(canvasCuadriculas3d);
+      containerCuadriculas3d.style.display = 'none';
+      if (window.Cuadriculas3D) {
+        window.Cuadriculas3D.setMode(false);
+        window.Cuadriculas3D.resize();
+      }
+    }
+
+    const containerPieces3d = document.getElementById('lightbox-pieces3d-container');
+    const canvasPieces3d = document.getElementById('canvas-pieces3d');
+    const slidePieces3d = document.getElementById('pieces-3d-slide');
+    if (containerPieces3d && canvasPieces3d && slidePieces3d && containerPieces3d.style.display === 'block') {
+      slidePieces3d.appendChild(canvasPieces3d);
+      containerPieces3d.style.display = 'none';
+      if (window.Pieces3D) {
+        window.Pieces3D.setMode(false);
+        window.Pieces3D.resize();
+      }
+    }
   }
 
   track.addEventListener('click', event => {
     const slide = event.target.closest('.gallery-slide');
-    if (!slide || !slide.dataset.full) return;
+    if (!slide) return;
 
+    if (slide.id === 'board-3d-slide') {
+      open3DLightbox();
+      return;
+    }
+
+    if (slide.id === 'box-3d-slide') {
+      openBox3DLightbox();
+      return;
+    }
+
+    if (slide.id === 'cards-3d-slide') {
+      openCards3DLightbox();
+      return;
+    }
+
+    if (slide.id === 'ruleta-3d-slide') {
+      openRuleta3DLightbox();
+      return;
+    }
+
+    if (slide.id === 'cuadriculas-3d-slide') {
+      openCuadriculas3DLightbox();
+      return;
+    }
+
+    if (slide.id === 'pieces-3d-slide') {
+      openPieces3DLightbox();
+      return;
+    }
+
+    if (!slide.dataset.full) return;
     const img = slide.querySelector('img');
     openLightbox(slide.dataset.full, img?.alt || 'Vista ampliada');
   });
 
   track.addEventListener('keydown', event => {
     const slide = event.target.closest('.gallery-slide');
-    if (!slide || !slide.dataset.full) return;
+    if (!slide) return;
 
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      const img = slide.querySelector('img');
-      openLightbox(slide.dataset.full, img?.alt || 'Vista ampliada');
+      if (slide.id === 'board-3d-slide') {
+        open3DLightbox();
+      } else if (slide.id === 'box-3d-slide') {
+        openBox3DLightbox();
+      } else if (slide.id === 'cards-3d-slide') {
+        openCards3DLightbox();
+      } else if (slide.id === 'ruleta-3d-slide') {
+        openRuleta3DLightbox();
+      } else if (slide.id === 'cuadriculas-3d-slide') {
+        openCuadriculas3DLightbox();
+      } else if (slide.id === 'pieces-3d-slide') {
+        openPieces3DLightbox();
+      } else if (slide.dataset.full) {
+        const img = slide.querySelector('img');
+        openLightbox(slide.dataset.full, img?.alt || 'Vista ampliada');
+      }
     }
   });
 
@@ -622,6 +955,31 @@ function setupMobileCards() {
 function init() {
   renderGallery();
   layout();
+
+  if (window.Board3D && window.Board3D.init) {
+    window.Board3D.init();
+  }
+
+  if (window.Box3D && window.Box3D.init) {
+    window.Box3D.init();
+  }
+
+  if (window.Cards3D && window.Cards3D.init) {
+    window.Cards3D.init();
+  }
+
+  if (window.Ruleta3D && window.Ruleta3D.init) {
+    window.Ruleta3D.init();
+  }
+
+  if (window.Cuadriculas3D && window.Cuadriculas3D.init) {
+    window.Cuadriculas3D.init();
+  }
+
+  if (window.Pieces3D && window.Pieces3D.init) {
+    window.Pieces3D.init();
+  }
+
   setupCursor();
   setupGalleryControls();
   setupLightbox();
@@ -633,5 +991,12 @@ function init() {
   updateScrollProgress(false);
 }
 
-document.addEventListener('DOMContentLoaded', init);
-
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      init();
+    });
+  } else {
+    setTimeout(init, 500);
+  }
+});

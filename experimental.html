@@ -3,20 +3,76 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cuadriculando – Experiencia tablero</title>
-  <link rel="stylesheet" href="experimental.css" />
+  <title>Cuadriculando – Descifra DO</title>
+  <link rel="stylesheet" href="experimental.css?v=25.0" />
 </head>
 <body>
-  <section id="s-experimental">
-    <div class="tablero-grid" id="board"></div>
+  <!-- Header de navegación y progreso -->
+  <header class="app-header">
+    <button class="btn-back" onclick="window.location.href='index.html'" aria-label="Volver al inicio">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    </button>
+    <div class="progress-container">
+      <div class="progress-bar-segment" id="seg-1" data-drag="1">
+        <span class="segment-label">1</span>
+        <div class="segment-box"></div>
+      </div>
+      <div class="progress-bar-segment" id="seg-2" data-drag="2">
+        <span class="segment-label">2</span>
+        <div class="segment-box"></div>
+      </div>
+      <div class="progress-bar-segment" id="seg-3" data-drag="3">
+        <span class="segment-label">3</span>
+        <div class="segment-box"></div>
+      </div>
+      <div class="progress-bar-segment" id="seg-4" data-drag="4">
+        <span class="segment-label">4</span>
+        <div class="segment-box"></div>
+      </div>
+      <div class="progress-bar-segment" id="seg-5" data-drag="5">
+        <span class="segment-label">5</span>
+        <div class="segment-box"></div>
+      </div>
+      <div class="progress-bar-segment" id="seg-6" data-drag="6">
+        <span class="segment-label">6</span>
+        <div class="segment-box"></div>
+      </div>
+    </div>
+    <div class="stage-counter" id="drag-counter">SWIPES: 0 / 6</div>
+  </header>
 
-    <div class="tablero-notch"></div>
-    <p class="tablero-instruction" id="instruction">arrastra horizontalmente</p>
-  </section>
+  <!-- Contenedor del Juego -->
+  <main class="game-container">
+    <div class="grid-paper-wrapper" id="game-wrapper">
+      <div id="interaction-canvas"></div>
+    </div>
+  </main>
 
-  <div id="blue-overlay"></div>
-  <div id="next-screen"></div>
+  <!-- Indicador de Gesto / Hint pasivo -->
+  <div class="gesture-hint visible" id="gesture-hint">
+    <div class="hint-icon-wrapper" id="hint-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 15l3-3m0 0l-3-3m3 3H3"></path>
+      </svg>
+    </div>
+    <span class="hint-text" id="hint-text">Arrastra para revelar el patrón</span>
+  </div>
 
-  <script src="experimental.js"></script>
+  <!-- Pantalla final de victoria -->
+  <div class="victory-screen" id="victory-overlay" style="display: none;">
+    <div class="victory-grid" id="victory-grid"></div>
+    <div class="victory-grid-assembled" id="victory-grid-assembled" style="display: none;"></div>
+    <h1 class="victory-title" id="victory-word">¡DESCIFRADO!</h1>
+    <p class="victory-subtitle" id="victory-subtitle">Patrón completado en 6 arrastres</p>
+    <div class="victory-actions">
+      <button class="btn-restart" id="btn-restart">Reiniciar</button>
+      <button class="btn-next" id="btn-next">Siguiente</button>
+    </div>
+  </div>
+
+  <script src="experimental.js?v=25.0"></script>
 </body>
 </html>

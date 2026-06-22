@@ -1,614 +1,1404 @@
-const boardEl = document.getElementById("board");
-const instructionEl = document.getElementById("instruction");
-const blueOverlayEl = document.getElementById("blue-overlay");
-const nextScreenEl = document.getElementById("next-screen");
+// ==========================================
+// CUADRICULANDO: EXPERIMENTAL EXPERIENCE (DO SCRATCH)
+// ==========================================
 
-const COLS = 4;
-const ROWS = 4;
-const key = (c, r) => `${c}-${r}`;
+const D_COORDS = [
+  // Top/bottom detached segments and middle horizontal cuts to make it abstract
+  // Row 4
+  [1,4], [2,4],         [5,4], [6,4],
+  // Row 5
+  [1,5], [2,5],         [5,5], [6,5], [7,5],
+  // Row 6
+  [1,6], [2,6],         [5,6], [6,6], [7,6],
+  // Row 7 (cut on left)
+                        [5,7], [6,7], [7,7],
+  // Row 8 (cut on right)
+  [1,8], [2,8],
+  // Row 9
+  [1,9], [2,9],         [5,9], [6,9], [7,9],
+  // Row 10
+  [1,10], [2,10],       [5,10], [6,10], [7,10],
+  // Row 11
+  [1,11], [2,11],       [5,11], [6,11]
+];
 
-/* ========== ESTADOS TABLERO ========== */
+const O_COORDS = [
+  // Four corner bracket-like disjoint strokes
+  // Row 4
+  [10,4],               [13,4],
+  // Row 5
+  [9,5], [10,5],        [13,5], [14,5],
+  // Row 6
+  [9,6], [10,6],        [13,6], [14,6],
+  // Row 7 (cut on left)
+                        [13,7], [14,7],
+  // Row 8 (cut on right)
+  [9,8], [10,8],
+  // Row 9
+  [9,9], [10,9],        [13,9], [14,9],
+  // Row 10
+  [9,10], [10,10],      [13,10], [14,10],
+  // Row 11
+  [10,11],              [13,11]
+];
 
-// Celdas especiales clickeables en el estado final (distribuidas y separadas)
-const specialCellsKeys = new Set([
-  key(0, 0),
-  key(3, 0),
-  key(1, 1),
-  key(2, 2),
-  key(0, 3),
-  key(3, 3),
-]);
+const CUA_COORDS = [
+  // C (disjoint stenciled bars and arcs)
+  [1, 4], [2, 4], [3, 4],
+  [1, 5], [2, 5],
+  [1, 6], [2, 6],
+  [1, 8], [2, 8],
+  [1, 9], [2, 9],
+  [1, 10], [2, 10],
+  [1, 11], [2, 11], [3, 11],
 
-/* Estado 1: 3 cuadros */
-const state1 = new Set([
-  key(1, 1),
-  key(2, 1),
-  key(1, 2),
-]);
+  // U (disjoint stenciled vertical walls and bottom)
+  [6, 4], [9, 4],
+  [6, 5], [9, 5],
+  [6, 6], [9, 6],
+  [6, 7],
+  [9, 8],
+  [6, 9], [9, 9],
+  [6, 10], [9, 10],
+  [6, 11], [9, 11],
 
-/* Estado 2: suma 3 nuevos */
-const state2On = new Set([
-  ...state1,
-  key(2, 2),
-  key(0, 1),
-  key(3, 1),
-]);
+  // A (disjoint stenciled walls, horizontal bars and apex)
+  [12, 4], [13, 4],
+  [11, 5], [14, 5],
+  [11, 6],
+  [11, 7], [14, 7],
+  [11, 8], [12, 8], [13, 8], [14, 8],
+  [14, 9],
+  [11, 10], [14, 10],
+  [11, 11], [14, 11]
+];
 
-/* Estado 3: suma 6 nuevos */
-const state3On = new Set([
-  ...state2On,
-  key(0, 0),
-  key(1, 0),
-  key(2, 0),
-  key(3, 0),
-  key(0, 2),
-  key(3, 2),
-]);
+const CU_COORDS = [
+  // C
+  [3, 4], [4, 4], [5, 4],
+  [3, 5], [4, 5],
+  [3, 6], [4, 6],
+  [3, 7],
+  [3, 8],
+  [3, 9], [4, 9],
+  [3, 10], [4, 10],
+  [3, 11], [4, 11], [5, 11],
 
-/* Estado 4: cuadrícula completa */
-const state4On = new Set();
-for (let r = 0; r < ROWS; r++) {
-  for (let c = 0; c < COLS; c++) {
-    state4On.add(key(c, r));
-  }
-}
+  // U
+  [10, 4], [13, 4],
+  [10, 5], [13, 5],
+  [10, 6], [13, 6],
+  [10, 7], [13, 7],
+  [10, 8], [13, 8],
+  [10, 9], [13, 9],
+  [10, 10], [13, 10],
+  [10, 11], [11, 11], [12, 11], [13, 11]
+];
 
-/* ========== CREAR CELDAS TABLERO ========== */
+const DRI_COORDS = [
+  // D
+  [1, 4], [1, 5], [1, 6], [1, 7], [1, 8], [1, 9], [1, 10], [1, 11],
+  [2, 4], [3, 4], [4, 4],
+  [2, 11], [3, 11], [4, 11],
+  [5, 5], [5, 6], [5, 7], [5, 8], [5, 9], [5, 10],
 
-const cells = [];
+  // R
+  [7, 4], [7, 5], [7, 6], [7, 7], [7, 8], [7, 9], [7, 10], [7, 11],
+  [8, 4], [9, 4], [10, 4],
+  [8, 7], [9, 7], [10, 7],
+  [11, 5], [11, 6],
+  [9, 8], [10, 9], [11, 10], [11, 11],
 
-for (let r = 0; r < ROWS; r++) {
-  for (let c = 0; c < COLS; c++) {
-    const cell = document.createElement("div");
-    cell.className = "tablero-cell";
-    cell.dataset.key = key(c, r);
+  // I
+  [13, 4], [13, 5], [13, 6], [13, 7], [13, 8], [13, 9], [13, 10], [13, 11],
+  [12, 4], [14, 4],
+  [12, 11], [14, 11]
+];
 
-    const fill = document.createElement("div");
-    fill.className = "tablero-fill";
-    cell.appendChild(fill);
+const LAN_COORDS = [
+  // L
+  [1, 4], [1, 5], [1, 6], [1, 7], [1, 8], [1, 9], [1, 10], [1, 11],
+  [2, 11], [3, 11], [4, 11],
 
-    boardEl.appendChild(cell);
-    cells.push(cell);
-  }
-}
+  // A
+  [6, 5], [6, 6], [6, 7], [6, 8], [6, 9], [6, 10], [6, 11],
+  [10, 5], [10, 6], [10, 7], [10, 8], [10, 9], [10, 10], [10, 11],
+  [7, 4], [8, 4], [9, 4],
+  [7, 8], [8, 8], [9, 8],
 
-// Marcar las celdas especiales según sus claves
-cells.forEach((cell) => {
-  const k = cell.dataset.key;
-  if (specialCellsKeys.has(k)) {
-    cell.classList.add("special");
-  }
+  // N
+  [12, 4], [12, 5], [12, 6], [12, 7], [12, 8], [12, 9], [12, 10], [12, 11],
+  [15, 4], [15, 5], [15, 6], [15, 7], [15, 8], [15, 9], [15, 10], [15, 11],
+  [13, 5], [13, 6], [13, 7], [14, 8], [14, 9], [14, 10]
+];
+
+const letterSet = new Set();
+
+const DRAG_COLUMNS = {
+  1: [0, 1, 2],
+  2: [3, 4],
+  3: [5, 6, 7, 8],
+  4: [9, 10],
+  5: [11, 12],
+  6: [13, 14, 15]
+};
+
+// Stage 2 Hotspots (X, Y coordinate and the drag column index it reveals)
+const STAGE2_HOTSPOTS = [
+  { x: 2, y: 3, columnSlice: 1, colorName: "verde", colorHex: "#74d643", colorRgb: "116, 214, 67" },
+  { x: 5, y: 9, columnSlice: 2, colorName: "amarillo", colorHex: "#f0cf3c", colorRgb: "240, 207, 60" },
+  { x: 8, y: 5, columnSlice: 3, colorName: "azul", colorHex: "#3c6ed4", colorRgb: "60, 110, 212" },
+  { x: 11, y: 12, columnSlice: 4, colorName: "rojo", colorHex: "#d23434", colorRgb: "210, 52, 52" },
+  { x: 13, y: 2, columnSlice: 5, colorName: "verde", colorHex: "#74d643", colorRgb: "116, 214, 67" },
+  { x: 7, y: 14, columnSlice: 6, colorName: "azul", colorHex: "#3c6ed4", colorRgb: "60, 110, 212" }
+];
+
+// Stage 3 Simon Nodes definitions (4 corners of C and U stencil)
+const STAGE3_NODES = [
+  { x: 3, y: 4, colorName: "rojo", colorHex: "#d23434", colorRgb: "210, 52, 52" },      // C Top-Left
+  { x: 3, y: 11, colorName: "azul", colorHex: "#3c6ed4", colorRgb: "60, 110, 212" },    // C Bottom-Left
+  { x: 13, y: 4, colorName: "amarillo", colorHex: "#f0cf3c", colorRgb: "240, 207, 60" }, // U Top-Right
+  { x: 13, y: 11, colorName: "verde", colorHex: "#74d643", colorRgb: "116, 214, 67" }   // U Bottom-Right
+];
+
+// The 6-step Simon sequence
+const STAGE3_SEQUENCE = [0, 2, 1, 3, 0, 3]; // Rojo -> Amarillo -> Azul -> Verde -> Rojo -> Verde
+
+// Sizing
+const GRID_SIZE = 16;
+
+// State Variables
+let currentStage = 1; // 1 = DO, 2 = CUA, 3 = CU
+let currentDrag = 0; // 0 to 6 (Stage 1 swipes)
+let currentClicks = 0; // 0 to 6 (Stage 2 hotspot clicks)
+let activatedHotspots = new Set(); // Column slices already revealed in Stage 2
+let stage3UserClicks = []; // User clicks for the current attempt
+let isSequencePlaying = false; // Disable user pointer events while sequence is playing
+let sequencePlaybackTimeout = null; // Reference to cancel playback
+let scratchedInkedCount = 0; // Number of inked cells revealed in Level 4
+let isScratching = false; // State to track free scratching drag in Level 4
+let stage5LockedCount = 0; // Number of permanently locked cells in Level 5
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+let cellsMap = {}; // key -> DOM element
+let inactivityTimer = null;
+let phantom = { x: 8, y: 8, vx: 0.08, vy: 0.08 }; // Floating phantom cursor particle
+let userPointer = { active: false, x: 8, y: 8, lastActive: 0 }; // Track user pointer coordinates
+let victoryCells = []; // Active DOM elements for victory screen wave
+
+// DOM elements
+const canvasEl = document.getElementById("interaction-canvas");
+const wrapperEl = document.getElementById("game-wrapper");
+const dragCounterEl = document.getElementById("drag-counter");
+const gestureHintEl = document.getElementById("gesture-hint");
+const victoryOverlayEl = document.getElementById("victory-overlay");
+const victoryGridEl = document.getElementById("victory-grid");
+const btnRestartEl = document.getElementById("btn-restart");
+const btnNextEl = document.getElementById("btn-next");
+
+document.addEventListener("DOMContentLoaded", () => {
+  setupApp();
+  initGame();
 });
 
-/* ========== PANTALLA AZUL: GRILLA TIPO BUSCAMINAS ========== */
-
-function buildBlueGrid() {
-  blueOverlayEl.innerHTML = "";
-
-  const grid = document.createElement("div");
-  grid.className = "blue-grid";
-
-  const size = 6; // 6x6 → 36 celdas
-  const total = size * size;
-
-  const colorKeys = ["verde", "amarillo", "azul", "rojo", "verde2", "rojo2"];
-  const colorMap = {
-    verde: "#74d643",
-    amarillo: "#f0cf3c",
-    azul: "#3c6ed4",
-    rojo: "#d23434",
-    verde2: "#74d643",
-    rojo2: "#d23434",
-  };
-
-  // 6 posiciones únicas
-  const indices = [];
-  while (indices.length < colorKeys.length) {
-    const idx = Math.floor(Math.random() * total);
-    if (!indices.includes(idx)) indices.push(idx);
+function setupApp() {
+  // Restart Button - resets the whole game back to Level 1
+  if (btnRestartEl) {
+    btnRestartEl.addEventListener("click", () => {
+      victoryOverlayEl.classList.remove("show");
+      currentStage = 1;
+      initGame();
+    });
   }
 
-  const coloredCells = {};
-  indices.forEach((idx, i) => {
-    coloredCells[idx] = colorMap[colorKeys[i]];
+  // Next Button - moves to the next level
+  if (btnNextEl) {
+    btnNextEl.addEventListener("click", () => {
+      victoryOverlayEl.classList.remove("show");
+      currentStage++;
+      initGame();
+    });
+  }
+
+  // Track Inactivity for hinting
+  resetInactivityTimer();
+  window.addEventListener("pointerdown", resetInactivityTimer);
+  window.addEventListener("pointermove", resetInactivityTimer);
+
+  // Track user cursor coordinate mappings dynamically across the canvas
+  canvasEl.addEventListener("pointermove", (e) => {
+    const rect = canvasEl.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) {
+      const px = e.clientX - rect.left;
+      const py = e.clientY - rect.top;
+      userPointer.x = px / (rect.width / GRID_SIZE);
+      userPointer.y = py / (rect.height / GRID_SIZE);
+      userPointer.active = true;
+      userPointer.lastActive = Date.now();
+    }
   });
 
-  let discoveredCount = 0;
-  const totalColors = colorKeys.length;
-  const foundColors = []; // guardaremos los 6 colores descubiertos
+  canvasEl.addEventListener("pointerleave", () => {
+    userPointer.active = false;
+  });
 
-  for (let i = 0; i < total; i++) {
-    const cell = document.createElement("div");
-    cell.className = "blue-cell";
+  // Pointer event listeners on canvas (which now has active hit-test dimensions in CSS)
+  canvasEl.addEventListener("pointerdown", onPointerDown);
+  window.addEventListener("pointermove", onPointerMove);
+  window.addEventListener("pointerup", onPointerUp);
 
-    const bg = document.createElement("div");
-    bg.className = "blue-cell-bg";
+  if (victoryGridEl) {
+    victoryGridEl.addEventListener("pointermove", (e) => {
+      const rect = victoryGridEl.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        const px = e.clientX - rect.left;
+        const py = e.clientY - rect.top;
+        userPointer.x = px / (rect.width / GRID_SIZE);
+        userPointer.y = py / (rect.height / GRID_SIZE);
+        userPointer.active = true;
+        userPointer.lastActive = Date.now();
+      }
+    });
 
-    if (coloredCells[i]) {
-      // celdas con color: cuadrito pequeño
-      const color = coloredCells[i];
-      bg.style.color = color;          // se usa en CSS como currentColor
-      bg.classList.add("small-color");
-      cell.dataset.hasColor = "true";
-      cell.dataset.colorValue = color;
-    } else {
-      // celdas sin color: negro a pantalla completa
-      bg.style.backgroundColor = "#000";
-      cell.dataset.hasColor = "false";
+    victoryGridEl.addEventListener("pointerleave", () => {
+      userPointer.active = false;
+    });
+  }
+
+  // Start the continuous color animation loop
+  animateColorWave();
+}
+
+function resetInactivityTimer() {
+  gestureHintEl.classList.remove("visible");
+  clearTimeout(inactivityTimer);
+  if (currentDrag < 6) {
+    inactivityTimer = setTimeout(() => {
+      gestureHintEl.classList.add("visible");
+    }, 6000);
+  }
+}
+
+function initGame() {
+  // Clear and populate letterSet based on the active stage
+  letterSet.clear();
+  if (currentStage === 1) {
+    D_COORDS.forEach(([x, y]) => letterSet.add(`${x}-${y}`));
+    O_COORDS.forEach(([x, y]) => letterSet.add(`${x}-${y}`));
+    document.getElementById("hint-text").textContent = "Arrastra para revelar el patrón";
+  } else if (currentStage === 2) {
+    CUA_COORDS.forEach(([x, y]) => letterSet.add(`${x}-${y}`));
+    document.getElementById("hint-text").textContent = "Busca los 6 cuadritos con el cursor y haz clic";
+  } else if (currentStage === 3) {
+    CU_COORDS.forEach(([x, y]) => letterSet.add(`${x}-${y}`));
+    document.getElementById("hint-text").textContent = "Observa el patrón de destellos y repítelo";
+  } else if (currentStage === 4) {
+    DRI_COORDS.forEach(([x, y]) => letterSet.add(`${x}-${y}`));
+    document.getElementById("hint-text").textContent = "Arrastra sobre el tablero para raspar y revelar el patrón";
+  } else {
+    document.getElementById("hint-text").textContent = "Arrastra y ordena las sílabas para descifrar CUADRICULANDO";
+  }
+
+  currentDrag = 0;
+  currentClicks = 0;
+  activatedHotspots.clear();
+  stage3UserClicks = [];
+  isSequencePlaying = false;
+  if (sequencePlaybackTimeout) {
+    clearTimeout(sequencePlaybackTimeout);
+    sequencePlaybackTimeout = null;
+  }
+  scratchedInkedCount = 0;
+  isScratching = false;
+  stage5LockedCount = 0;
+  wrapperEl.classList.remove("shake-grid");
+  canvasEl.innerHTML = "";
+  cellsMap = {};
+  victoryCells = []; // Reset victory grid list
+  wrapperEl.classList.remove("has-started");
+  
+  if (victoryOverlayEl) {
+    victoryOverlayEl.style.display = "none";
+    victoryOverlayEl.classList.remove("show");
+  }
+
+  // Reset phantom position to center
+  phantom.x = GRID_SIZE / 2;
+  phantom.y = GRID_SIZE / 2;
+  phantom.vx = 0.08;
+  phantom.vy = 0.08;
+
+  // Update Header indicators
+  updateHeader();
+
+  // If Stage 5 (Syllable sorting), run it and return
+  if (currentStage === 5) {
+    canvasEl.classList.add("sorting-mode");
+    wrapperEl.classList.add("sorting-mode");
+    initSyllableSorting();
+    return;
+  } else {
+    canvasEl.classList.remove("sorting-mode");
+    wrapperEl.classList.remove("sorting-mode");
+  }
+
+  // Create 16x16 grid of cells using percentages for responsiveness
+  const cellPercent = 100 / GRID_SIZE;
+  
+  for (let r = 0; r < GRID_SIZE; r++) {
+    for (let c = 0; c < GRID_SIZE; c++) {
+      const cell = document.createElement("div");
+      if (currentStage === 3) {
+        cell.className = "grid-cell revealed";
+      } else {
+        cell.className = "grid-cell blackout";
+      }
+      cell.style.width = `${cellPercent}%`;
+      cell.style.height = `${cellPercent}%`;
+      cell.style.left = `${c * cellPercent}%`;
+      cell.style.top = `${r * cellPercent}%`;
+      
+      const key = `${c}-${r}`;
+      cell.dataset.x = c;
+      cell.dataset.y = r;
+      cell.dataset.key = key;
+
+      // Stage 3 Simon Node styling
+      const simonNodeIndex = STAGE3_NODES.findIndex(n => n.x === c && n.y === r);
+      if (currentStage === 3 && simonNodeIndex !== -1) {
+        const node = STAGE3_NODES[simonNodeIndex];
+        cell.classList.add("simon-node");
+        cell.style.backgroundColor = node.colorHex;
+        cell.style.borderColor = node.colorHex;
+        cell.dataset.simonIndex = simonNodeIndex;
+      }
+
+      // Add click handler
+      cell.addEventListener("click", () => {
+        onCellClick(c, r);
+      });
+
+      canvasEl.appendChild(cell);
+      cellsMap[key] = cell;
     }
+  }
 
-    const overlay = document.createElement("div");
-    overlay.className = "blue-cell-overlay";
+  // Trigger stage 3 sequence playback
+  if (currentStage === 3) {
+    isSequencePlaying = true;
+    sequencePlaybackTimeout = setTimeout(() => {
+      playStage3Sequence();
+    }, 1200);
+  }
+}
 
-    cell.appendChild(bg);
-    cell.appendChild(overlay);
-    grid.appendChild(cell);
+function updateHeader() {
+  const progressContainerEl = document.querySelector(".progress-container");
+  if (progressContainerEl) {
+    if (currentStage === 5) {
+      progressContainerEl.style.display = "none";
+    } else {
+      progressContainerEl.style.display = "flex";
+    }
+  }
 
-    cell.addEventListener("click", () => {
-      if (cell.dataset.hasColor === "true" && !cell.classList.contains("discovered")) {
-        cell.classList.add("discovered");
-        discoveredCount += 1;
-        foundColors.push(cell.dataset.colorValue);
+  if (currentStage === 1) {
+    dragCounterEl.textContent = `SWIPES: ${currentDrag} / 6`;
+  } else if (currentStage === 2) {
+    dragCounterEl.textContent = `HALLADOS: ${currentClicks} / 6`;
+  } else if (currentStage === 3) {
+    dragCounterEl.textContent = `PATRÓN: ${stage3UserClicks.length} / 6`;
+  } else if (currentStage === 4) {
+    const percent = Math.min(100, Math.floor((scratchedInkedCount / 40) * 100));
+    dragCounterEl.textContent = `RASPADO: ${percent}%`;
+  } else {
+    dragCounterEl.textContent = `ORDENAR SÍLABAS`;
+  }
+  
+  let currentCount = 0;
+  if (currentStage === 1) currentCount = currentDrag;
+  else if (currentStage === 2) currentCount = currentClicks;
+  else if (currentStage === 3) currentCount = stage3UserClicks.length;
+  else if (currentStage === 4) currentCount = Math.min(6, Math.floor((scratchedInkedCount / 40) * 6));
+  else currentCount = 0;
 
-        if (discoveredCount === totalColors) {
-          // 1. Medir las posiciones estables de las celdas antes de que exploten
-          const discoveredElements = document.querySelectorAll(".blue-cell.discovered");
-          const sourceCoordinates = {};
-          discoveredElements.forEach((el) => {
-            const color = el.dataset.colorValue;
-            const rect = el.getBoundingClientRect();
-            const leftPercent = ((rect.left + rect.width / 2) / window.innerWidth) * 100;
-            const topPercent = ((rect.top + rect.height / 2) / window.innerHeight) * 100;
-            sourceCoordinates[color] = { top: topPercent, left: leftPercent };
+  for (let i = 1; i <= 6; i++) {
+    const seg = document.getElementById(`seg-${i}`);
+    if (seg) {
+      if (i <= currentCount) {
+        seg.classList.add("solved");
+        seg.classList.remove("active");
+      } else if (i === currentCount + 1) {
+        seg.classList.add("active");
+        seg.classList.remove("solved");
+      } else {
+        seg.classList.remove("active", "solved");
+      }
+    }
+  }
+}
+
+function onPointerDown(e) {
+  if (victoryOverlayEl && victoryOverlayEl.classList.contains("show")) return;
+  if (currentStage === 5) return;
+  if (currentStage === 1) {
+    if (currentDrag >= 6) return;
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    wrapperEl.classList.add("has-started");
+  } else if (currentStage === 4) {
+    if (scratchedInkedCount >= 40) return;
+    isScratching = true;
+    scratchCellAtPointer(e);
+  }
+}
+
+function onPointerMove(e) {
+  if (victoryOverlayEl && victoryOverlayEl.classList.contains("show")) return;
+  if (currentStage === 5) return;
+  if (currentStage === 1) {
+    if (!isDragging) return;
+
+    const rect = canvasEl.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+
+    // Calculate cell index dynamically based on actual canvas size
+    const cellWidth = rect.width / GRID_SIZE;
+    const cellHeight = rect.height / GRID_SIZE;
+
+    const cellX = Math.floor(px / cellWidth);
+    const cellY = Math.floor(py / cellHeight);
+
+    // Illuminate hovered cell if still blacked out
+    const targetKey = `${cellX}-${cellY}`;
+    const cell = cellsMap[targetKey];
+    if (cell && cell.classList.contains("blackout")) {
+      cell.classList.add("hover-temp");
+      setTimeout(() => {
+        cell.classList.remove("hover-temp");
+      }, 400);
+    }
+  } else if (currentStage === 4) {
+    if (!isScratching || scratchedInkedCount >= 40) return;
+    scratchCellAtPointer(e);
+  }
+}
+
+function onPointerUp(e) {
+  if (victoryOverlayEl && victoryOverlayEl.classList.contains("show")) return;
+  if (currentStage === 5) return;
+  if (currentStage === 1) {
+    if (!isDragging) return;
+    isDragging = false;
+
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    const dist = Math.hypot(dx, dy);
+
+    // If swiped/dragged a sufficient distance (80px), reveal the next column batch
+    if (dist > 80 && currentDrag < 6) {
+      revealNextBatch();
+    }
+  } else if (currentStage === 4) {
+    isScratching = false;
+  }
+}
+
+function revealNextBatch() {
+  currentDrag++;
+  updateHeader();
+
+  const activeCols = DRAG_COLUMNS[currentDrag];
+  const cellsToReveal = [];
+
+  // Gather all cells in these columns
+  for (let r = 0; r < GRID_SIZE; r++) {
+    activeCols.forEach(c => {
+      const cell = cellsMap[`${c}-${r}`];
+      if (cell && cell.classList.contains("blackout")) {
+        cellsToReveal.push(cell);
+      }
+    });
+  }
+
+  // Staggered 3D flip animation
+  cellsToReveal.sort((a, b) => {
+    const ax = parseInt(a.dataset.x);
+    const ay = parseInt(a.dataset.y);
+    const bx = parseInt(b.dataset.x);
+    const by = parseInt(b.dataset.y);
+    return ax !== bx ? ax - bx : ay - by;
+  });
+
+  const startCol = activeCols[0];
+  cellsToReveal.forEach(cell => {
+    const cx = parseInt(cell.dataset.x);
+    const cy = parseInt(cell.dataset.y);
+
+    // Calculate delay based on distance/offset
+    const delay = (cx - startCol) * 80 + cy * 15;
+
+    setTimeout(() => {
+      cell.classList.remove("blackout");
+      cell.classList.add("revealed");
+      
+      const key = cell.dataset.key;
+      if (letterSet.has(key)) {
+        cell.classList.add("inked");
+      }
+    }, delay);
+  });
+
+  // Check victory
+  if (currentDrag === 6) {
+    setTimeout(triggerVictory, 1400);
+  }
+}
+
+// STAGE 2 HOTSPOT CLICKS & STAGE 3 SIMON SEQUENCE
+function onCellClick(c, r) {
+  if (victoryOverlayEl && victoryOverlayEl.classList.contains("show")) return;
+  
+  if (currentStage === 2) {
+    const hotspot = STAGE2_HOTSPOTS.find(h => h.x === c && h.y === r);
+    if (!hotspot) return;
+    if (activatedHotspots.has(hotspot.columnSlice)) return;
+    
+    revealHotspotColumns(hotspot.columnSlice);
+  } else if (currentStage === 3) {
+    if (isSequencePlaying) return;
+    if (stage3UserClicks.length >= STAGE3_SEQUENCE.length) return;
+    
+    // Check if clicked cell is one of the 4 Simon nodes
+    const simonIndex = STAGE3_NODES.findIndex(n => n.x === c && n.y === r);
+    if (simonIndex === -1) return;
+    
+    const cell = cellsMap[`${c}-${r}`];
+    
+    // Flash clicked node for immediate feedback
+    if (cell) {
+      cell.classList.add("flash-active");
+      setTimeout(() => {
+        cell.classList.remove("flash-active");
+      }, 200);
+    }
+    
+    // Validate sequence step
+    const expectedIndex = STAGE3_SEQUENCE[stage3UserClicks.length];
+    if (simonIndex === expectedIndex) {
+      // Correct click!
+      stage3UserClicks.push(simonIndex);
+      updateHeader();
+      
+      // If sequence is completed
+      if (stage3UserClicks.length === STAGE3_SEQUENCE.length) {
+        revealStage3Victory();
+        setTimeout(triggerVictory, 1800);
+      }
+    } else {
+      // Incorrect click!
+      isSequencePlaying = true;
+      setSimonNodesActive(false); // Disable breathing during shake/replay
+      wrapperEl.classList.add("shake-grid");
+      document.getElementById("hint-text").textContent = "¡Incorrecto! Observa de nuevo";
+      
+      // Reset clicks and update header
+      stage3UserClicks = [];
+      updateHeader();
+      
+      setTimeout(() => {
+        wrapperEl.classList.remove("shake-grid");
+        playStage3Sequence();
+      }, 1200);
+    }
+  } else if (currentStage === 5) {
+    if (isSequencePlaying) return;
+    
+    // Always emit a sonar pulse from clicked cell
+    triggerSonarPulse(c, r);
+    
+    const key = `${c}-${r}`;
+    const cell = cellsMap[key];
+    if (cell && letterSet.has(key) && !cell.classList.contains("revealed")) {
+      cell.classList.remove("blackout");
+      cell.classList.add("revealed", "inked");
+      stage5LockedCount++;
+      updateHeader();
+      
+      if (stage5LockedCount >= 42) {
+        isSequencePlaying = true; // Block clicks
+        revealAllGrid();
+        setTimeout(triggerVictory, 1500);
+      }
+    }
+  }
+}
+
+function setSimonNodesActive(active) {
+  const nodes = document.querySelectorAll(".simon-node");
+  nodes.forEach(node => {
+    if (active) {
+      node.classList.add("user-turn-active");
+    } else {
+      node.classList.remove("user-turn-active");
+    }
+  });
+}
+
+function playStage3Sequence() {
+  isSequencePlaying = true;
+  setSimonNodesActive(false); // Disable breathing during playback
+  document.getElementById("hint-text").textContent = "Observa el patrón de destellos...";
+  
+  let i = 0;
+  
+  function nextStep() {
+    // If the stage changed or game reset while playing, abort
+    if (currentStage !== 3 || victoryOverlayEl.classList.contains("show")) return;
+
+    if (i >= STAGE3_SEQUENCE.length) {
+      isSequencePlaying = false;
+      setSimonNodesActive(true); // Enable breathing on user's turn
+      document.getElementById("hint-text").textContent = "¡Tu turno! Repite el patrón";
+      return;
+    }
+    
+    const nodeIndex = STAGE3_SEQUENCE[i];
+    const node = STAGE3_NODES[nodeIndex];
+    const key = `${node.x}-${node.y}`;
+    const cell = cellsMap[key];
+    
+    if (cell) {
+      cell.classList.add("flash-active");
+      setTimeout(() => {
+        cell.classList.remove("flash-active");
+      }, 500);
+    }
+    
+    i++;
+    sequencePlaybackTimeout = setTimeout(nextStep, 900);
+  }
+  
+  nextStep();
+}
+
+function revealStage3Victory() {
+  isSequencePlaying = true;
+  setSimonNodesActive(false); // Disable breathing on victory
+  document.getElementById("hint-text").textContent = "¡Patrón correcto!";
+  
+  // Gather and sort all CU_COORDS cells to reveal in a wave
+  const cellsToReveal = [];
+  for (const key of letterSet) {
+    const cell = cellsMap[key];
+    if (cell) {
+      cellsToReveal.push(cell);
+    }
+  }
+  
+  cellsToReveal.sort((a, b) => {
+    const ax = parseInt(a.dataset.x);
+    const ay = parseInt(a.dataset.y);
+    const bx = parseInt(b.dataset.x);
+    const by = parseInt(b.dataset.y);
+    return ax !== bx ? ax - bx : ay - by;
+  });
+  
+  cellsToReveal.forEach((cell, idx) => {
+    setTimeout(() => {
+      cell.classList.add("inked");
+      cell.style.transform = "scale(1.2) translateZ(10px)";
+      setTimeout(() => {
+        cell.style.transform = "";
+      }, 250);
+    }, idx * 40);
+  });
+}
+
+function scratchCellAtPointer(e) {
+  if (currentStage !== 4) return;
+  const rect = canvasEl.getBoundingClientRect();
+  const px = e.clientX - rect.left;
+  const py = e.clientY - rect.top;
+  
+  if (px < 0 || px > rect.width || py < 0 || py > rect.height) return;
+  
+  const cellWidth = rect.width / GRID_SIZE;
+  const cellHeight = rect.height / GRID_SIZE;
+  const cellX = Math.floor(px / cellWidth);
+  const cellY = Math.floor(py / cellHeight);
+  
+  if (cellX >= 0 && cellX < GRID_SIZE && cellY >= 0 && cellY < GRID_SIZE) {
+    const key = `${cellX}-${cellY}`;
+    const cell = cellsMap[key];
+    if (cell && cell.classList.contains("blackout")) {
+      revealScratchedCell(cell, key);
+    }
+  }
+}
+
+function revealScratchedCell(cell, key) {
+  cell.classList.remove("blackout");
+  cell.classList.add("revealed");
+  
+  const isInked = letterSet.has(key);
+  if (isInked) {
+    cell.classList.add("inked");
+    scratchedInkedCount++;
+    updateHeader();
+    
+    // Victory limit is 40 for DRI (85% of 48)
+    if (scratchedInkedCount >= 40) {
+      isScratching = false;
+      revealAllGrid();
+      setTimeout(triggerVictory, 1500);
+    }
+  }
+
+  // Temporary 4-color rainbow splash effect (verde, amarillo, azul, rojo)
+  const colors = ["#74d643", "#f0cf3c", "#3c6ed4", "#d23434"];
+  const cx = parseInt(cell.dataset.x);
+  const cy = parseInt(cell.dataset.y);
+  const color = colors[(cx + cy) % 4];
+
+  cell.style.backgroundColor = color;
+  cell.style.borderColor = color;
+
+  // Transition to default paper/ink style
+  setTimeout(() => {
+    cell.style.transition = "background-color 0.8s ease, border-color 0.8s ease";
+    cell.style.backgroundColor = "";
+    cell.style.borderColor = "";
+    setTimeout(() => {
+      cell.style.transition = "";
+    }, 800);
+  }, 50);
+}
+
+function revealAllGrid() {
+  for (const key in cellsMap) {
+    const cell = cellsMap[key];
+    if (cell && cell.classList.contains("blackout")) {
+      const tx = parseInt(cell.dataset.x);
+      const ty = parseInt(cell.dataset.y);
+      // Staggered reveal sweep from top-left to bottom-right
+      const delay = tx * 40 + ty * 15;
+
+      setTimeout(() => {
+        cell.classList.remove("blackout");
+        cell.classList.add("revealed");
+        if (letterSet.has(key)) {
+          cell.classList.add("inked");
+        }
+        cell.style.transform = "";
+        cell.style.backgroundColor = "";
+        cell.style.borderColor = "";
+        cell.style.opacity = "";
+        cell.style.boxShadow = "";
+      }, delay);
+    }
+  }
+}
+
+function triggerSonarPulse(cx, cy) {
+  const cellsByDist = {};
+  
+  for (const key in cellsMap) {
+    const cell = cellsMap[key];
+    if (!cell) continue;
+    
+    const tx = parseInt(cell.dataset.x);
+    const ty = parseInt(cell.dataset.y);
+    const d = Math.abs(tx - cx) + Math.abs(ty - cy);
+    
+    if (!cellsByDist[d]) {
+      cellsByDist[d] = [];
+    }
+    cellsByDist[d].push(cell);
+  }
+  
+  const maxDistance = 30;
+  for (let d = 0; d <= maxDistance; d++) {
+    const list = cellsByDist[d];
+    if (!list || list.length === 0) continue;
+    
+    setTimeout(() => {
+      if (currentStage !== 5 || victoryOverlayEl.classList.contains("show")) return;
+      
+      list.forEach(cell => {
+        const key = cell.dataset.key;
+        
+        if (letterSet.has(key)) {
+          const colors = ["#ff3b30", "#ffd60a", "#0a84ff", "#30d158"];
+          const tx = parseInt(cell.dataset.x);
+          const ty = parseInt(cell.dataset.y);
+          const color = colors[(tx + ty) % 4];
+          cell.style.setProperty("--sonar-bg", color);
+          cell.style.setProperty("--sonar-border", color);
+        } else {
+          cell.style.setProperty("--sonar-bg", "rgba(255, 255, 255, 0.12)");
+          cell.style.setProperty("--sonar-border", "rgba(255, 255, 255, 0.22)");
+        }
+        
+        cell.classList.add("sonar-pulse-active");
+        
+        setTimeout(() => {
+          cell.classList.remove("sonar-pulse-active");
+        }, 600);
+      });
+    }, d * 80);
+  }
+}
+
+function revealHotspotColumns(sliceIndex) {
+  if (activatedHotspots.has(sliceIndex)) return;
+  activatedHotspots.add(sliceIndex);
+
+  currentClicks++;
+  updateHeader();
+
+  const activeCols = DRAG_COLUMNS[sliceIndex];
+  const cellsToReveal = [];
+
+  // Gather all cells in these columns
+  for (let r = 0; r < GRID_SIZE; r++) {
+    activeCols.forEach(c => {
+      const cell = cellsMap[`${c}-${r}`];
+      if (cell && cell.classList.contains("blackout")) {
+        cellsToReveal.push(cell);
+      }
+    });
+  }
+
+  // Staggered 3D flip animation
+  cellsToReveal.sort((a, b) => {
+    const ax = parseInt(a.dataset.x);
+    const ay = parseInt(a.dataset.y);
+    const bx = parseInt(b.dataset.x);
+    const by = parseInt(b.dataset.y);
+    return ax !== bx ? ax - bx : ay - by;
+  });
+
+  const startCol = activeCols[0];
+  cellsToReveal.forEach(cell => {
+    const cx = parseInt(cell.dataset.x);
+    const cy = parseInt(cell.dataset.y);
+    const delay = (cx - startCol) * 80 + cy * 15;
+
+    setTimeout(() => {
+      cell.classList.remove("blackout");
+      cell.classList.add("revealed");
+      
+      const key = cell.dataset.key;
+      if (letterSet.has(key)) {
+        cell.classList.add("inked");
+      }
+    }, delay);
+  });
+
+  // Check victory
+  if (currentClicks === 6) {
+    setTimeout(triggerVictory, 1400);
+  }
+}
+
+// VICTORY SCREEN
+function triggerVictory() {
+  const victoryGridAssembledEl = document.getElementById("victory-grid-assembled");
+
+  if (currentStage === 5) {
+    if (victoryGridEl) victoryGridEl.style.display = "none";
+    if (victoryGridAssembledEl) {
+      victoryGridAssembledEl.style.display = "flex";
+      victoryGridAssembledEl.classList.add("unified-assembled");
+      victoryGridAssembledEl.innerHTML = "";
+      
+      const syllables = [
+        { coords: CUA_COORDS, label: "CUA", color: "#74d643", glow: "rgba(116, 214, 67, 0.35)" },
+        { coords: DRI_COORDS, label: "DRI", color: "#d23434", glow: "rgba(210, 52, 52, 0.35)" },
+        { coords: CU_COORDS, label: "CU", color: "#f0cf3c", glow: "rgba(240, 207, 60, 0.35)" },
+        { coords: LAN_COORDS, label: "LAN", color: "#3c6ed4", glow: "rgba(60, 110, 212, 0.35)" },
+        { coords: D_COORDS.concat(O_COORDS), label: "DO", color: "#ffffff", glow: "rgba(255, 255, 255, 0.35)" }
+      ];
+      
+      syllables.forEach((syll, idx) => {
+        const miniGrid = document.createElement("div");
+        miniGrid.className = "mini-grid";
+        miniGrid.style.setProperty("--theme-color", syll.color);
+        miniGrid.style.setProperty("--theme-color-glow", syll.glow);
+        miniGrid.style.animationDelay = `${idx * 180}ms`;
+        
+        const cellPercent = 100 / GRID_SIZE;
+        const set = new Set(syll.coords.map(coord => coord[0] + "-" + coord[1]));
+        
+        for (let r = 0; r < GRID_SIZE; r++) {
+          for (let c = 0; c < GRID_SIZE; c++) {
+            const cell = document.createElement("div");
+            cell.className = "mini-cell";
+            cell.style.width = `${cellPercent}%`;
+            cell.style.height = `${cellPercent}%`;
+            cell.style.left = `${c * cellPercent}%`;
+            cell.style.top = `${r * cellPercent}%`;
+            
+            if (set.has(`${c}-${r}`)) {
+              cell.classList.add("inked");
+            }
+            
+            miniGrid.appendChild(cell);
+          }
+        }
+        
+        const label = document.createElement("div");
+        label.className = "mini-grid-label";
+        label.textContent = syll.label;
+        miniGrid.appendChild(label);
+        
+        victoryGridAssembledEl.appendChild(miniGrid);
+      });
+    }
+  } else {
+    if (victoryGridAssembledEl) {
+      victoryGridAssembledEl.style.display = "none";
+      victoryGridAssembledEl.classList.remove("unified-assembled");
+    }
+    if (victoryGridEl) {
+      victoryGridEl.style.display = "block";
+      victoryGridEl.innerHTML = "";
+      
+      const cells = [];
+      const cellPercent = 100 / GRID_SIZE;
+      
+      // Render 16x16 grid for victory screen
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const cell = document.createElement("div");
+          cell.className = "victory-cell";
+          cell.style.width = `${cellPercent}%`;
+          cell.style.height = `${cellPercent}%`;
+          cell.style.left = `${c * cellPercent}%`;
+          cell.style.top = `${r * cellPercent}%`;
+          cell.dataset.x = c;
+          cell.dataset.y = r;
+
+          if (letterSet.has(`${c}-${r}`)) {
+            cell.classList.add("inked");
+          }
+
+          victoryGridEl.appendChild(cell);
+          cells.push(cell);
+        }
+      }
+
+      // Assign to global victoryCells array for the animation wave
+      victoryCells = cells;
+      
+      // Wave entrance animation
+      cells.forEach(cell => {
+        cell.style.transform = "scale(0) rotateY(90deg)";
+        cell.style.opacity = "0";
+      });
+
+      setTimeout(() => {
+        cells.forEach(cell => {
+          const col = parseInt(cell.dataset.x);
+          const row = parseInt(cell.dataset.y);
+          const delay = col * 35 + row * 10;
+          
+          cell.style.transition = `
+            transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.25) ${delay}ms,
+            opacity 0.6s ease ${delay}ms,
+            background-color 0.2s ease
+          `;
+          cell.style.transform = "scale(1) rotateY(0deg)";
+          cell.style.opacity = "1";
+        });
+
+        // Clear transitions after animation completes to allow smooth 60fps searchlight wave
+        setTimeout(() => {
+          cells.forEach(cell => {
+            cell.style.transition = "";
           });
+        }, 1400);
+      }, 100);
+    }
+  }
 
-          // 2. Activar la animación de explosión de las celdas en el CSS
-          blueOverlayEl.classList.add("explode");
+  // Toggle stage elements
+  if (currentStage === 1) {
+    document.getElementById("victory-word").textContent = "¡DESCIFRADO!";
+    document.getElementById("victory-subtitle").textContent = "Patrón completado en 6 arrastres";
+    if (btnNextEl) btnNextEl.style.display = "block";
+  } else if (currentStage === 2) {
+    document.getElementById("victory-word").textContent = "¡DESCIFRADO!";
+    document.getElementById("victory-subtitle").textContent = "Patrón completado hallando los 6 cuadritos";
+    if (btnNextEl) btnNextEl.style.display = "block";
+  } else if (currentStage === 3) {
+    document.getElementById("victory-word").textContent = "¡DESCIFRADO!";
+    document.getElementById("victory-subtitle").textContent = "Patrón completado siguiendo la secuencia de colores";
+    if (btnNextEl) btnNextEl.style.display = "block";
+  } else if (currentStage === 4) {
+    document.getElementById("victory-word").textContent = "¡DESCIFRADO!";
+    document.getElementById("victory-subtitle").textContent = "Patrón completado raspando el tablero";
+    if (btnNextEl) btnNextEl.style.display = "block";
+  } else {
+    document.getElementById("victory-word").textContent = "¡CUADRICULANDO!";
+    document.getElementById("victory-subtitle").textContent = "Has ordenado las sílabas completando la palabra";
+    if (btnNextEl) btnNextEl.style.display = "none";
+  }
 
-          // 3. Iniciar la pantalla final con la explosión de cuadritos de forma inmediata
-          buildNextScreenDots(foundColors, sourceCoordinates);
-          nextScreenEl.classList.add("is-visible");
+  if (victoryOverlayEl) {
+    victoryOverlayEl.style.display = "flex";
+    void victoryOverlayEl.offsetWidth; // force reflow
+    victoryOverlayEl.classList.add("show");
+  }
+}
+
+function animateColorWave() {
+  const now = Date.now();
+  const timeSec = now * 0.001; // time in seconds
+
+  // Smooth wandering path covering the 16x16 grid (using Lissajous curves)
+  // Auto path sweeps from approximately -3.2 to 19.2 so it naturally moves off/on grid edges.
+  const autoX = (Math.sin(timeSec * 0.9) * 0.35 + Math.sin(timeSec * 0.4) * 0.35 + 0.5) * GRID_SIZE;
+  const autoY = (Math.cos(timeSec * 0.8) * 0.35 + Math.cos(timeSec * 0.3) * 0.35 + 0.5) * GRID_SIZE;
+
+  let targetX = autoX;
+  let targetY = autoY;
+
+  // Blend from automatic path to user cursor if user is hovering inside grid boundaries
+  if (userPointer.active) {
+    const idleTime = now - userPointer.lastActive;
+    if (idleTime < 1000) {
+      // 1.0 at start of idle, 0.0 at 1000ms
+      const blend = 1.0 - (idleTime / 1000);
+      const t = blend * blend * (3 - 2 * blend); // smoothstep
+      targetX = autoX + (userPointer.x - autoX) * t;
+      targetY = autoY + (userPointer.y - autoY) * t;
+    }
+  }
+
+  // Smoothly interpolate the phantom cursor toward the target
+  phantom.x += (targetX - phantom.x) * 0.08;
+  phantom.y += (targetY - phantom.y) * 0.08;
+
+  // 1. Gameplay cells (Apply dynamic dome ripple to both revealed and blackout cells)
+  for (const key in cellsMap) {
+    const cell = cellsMap[key];
+    if (!cell) continue;
+
+    const cx = parseInt(cell.dataset.x);
+    const cy = parseInt(cell.dataset.y);
+    const dist = Math.hypot(cx - phantom.x, cy - phantom.y);
+    const r = 4.0; // Dome ripple radius
+
+    if (cell.classList.contains("revealed")) {
+      // Permanently revealed cells
+      if (dist < r) {
+        const factor = (r - dist) / r;
+        cell.style.transform = `scale(${1 + factor * 0.2}) translateZ(${factor * 10}px)`;
+        if (!cell.classList.contains("simon-node")) {
+          cell.style.backgroundColor = cell.classList.contains("inked") ? "#333" : "rgba(17, 17, 17, 0.15)";
+          if (cell.classList.contains("inked")) {
+            cell.style.borderColor = "#333";
+          }
+        }
+      } else {
+        cell.style.transform = "";
+        if (!cell.classList.contains("simon-node")) {
+          cell.style.backgroundColor = "";
+          cell.style.borderColor = "";
+        }
+      }
+    } else {
+      // Blackout cells (temporary reveal lens that matches hover style)
+      if (dist < r) {
+        const factor = (r - dist) / r;
+        cell.style.opacity = factor;
+        // Flip from 180deg to 0deg, scale to 1.2x, and elevate 10px
+        cell.style.transform = `rotateY(${180 - factor * 180}deg) scale(${0.95 + factor * 0.25}) translateZ(${factor * 10}px)`;
+        cell.style.backgroundColor = letterSet.has(key) ? "#333" : "rgba(17, 17, 17, 0.15)";
+        cell.style.borderColor = letterSet.has(key) ? "#333" : "rgba(17, 17, 17, 0.15)";
+      } else {
+        cell.style.opacity = "";
+        cell.style.transform = "";
+        cell.style.backgroundColor = "";
+        cell.style.borderColor = "";
+      }
+    }
+  }
+
+  // 1.5 Stage 2 Hotspots Hover/Glow Overlay
+  if (currentStage === 2) {
+    STAGE2_HOTSPOTS.forEach((hotspot) => {
+      const key = `${hotspot.x}-${hotspot.y}`;
+      const cell = cellsMap[key];
+      if (cell && !activatedHotspots.has(hotspot.columnSlice)) {
+        const cx = hotspot.x;
+        const cy = hotspot.y;
+        const dist = Math.hypot(cx - phantom.x, cy - phantom.y);
+        const r = 4.0;
+
+        // Strong pulsing effect for hidden hotspots (between 0.35 and 0.75 opacity for high visibility)
+        const pulse = Math.sin(timeSec * 3.0) * 0.2 + 0.55;
+
+        if (dist < r) {
+          const factor = (r - dist) / r;
+          const op = pulse + factor * (1.0 - pulse);
+          cell.style.opacity = op;
+          cell.style.transform = `rotateY(${180 - factor * 180}deg) scale(${0.95 + factor * 0.25}) translateZ(${factor * 10}px)`;
+          cell.style.backgroundColor = `rgba(${hotspot.colorRgb}, ${0.35 + factor * 0.65})`;
+          cell.style.borderColor = `rgba(255, 255, 255, ${0.6 + factor * 0.4})`;
+          cell.style.boxShadow = `0 0 15px rgba(${hotspot.colorRgb}, ${0.5 + factor * 0.5})`;
+          cell.style.cursor = "pointer";
+        } else {
+          cell.style.opacity = pulse;
+          cell.style.transform = "";
+          cell.style.backgroundColor = `rgba(${hotspot.colorRgb}, ${pulse * 0.55})`;
+          cell.style.borderColor = `rgba(${hotspot.colorRgb}, ${pulse})`;
+          cell.style.boxShadow = `0 0 8px rgba(${hotspot.colorRgb}, ${pulse * 0.3})`;
+          cell.style.cursor = "pointer";
         }
       }
     });
   }
 
-  blueOverlayEl.appendChild(grid);
-}
+  // 2. Victory cells (Apply dynamic dome ripple to all victory cells)
+  victoryCells.forEach(cell => {
+    const cx = parseInt(cell.dataset.x);
+    const cy = parseInt(cell.dataset.y);
+    const dist = Math.hypot(cx - phantom.x, cy - phantom.y);
+    const r = 4.0;
 
-function buildNextScreenDots(foundColors, sourceCoordinates) {
-  // limpiamos pantalla final
-  nextScreenEl.innerHTML = "";
-
-  const container = document.createElement("div");
-  container.className = "next-dots";
-  nextScreenEl.appendChild(container);
-
-  // paleta base: los 6 encontrados + los 4 colores del juego
-  const extraPalette = ["#74d643", "#f0cf3c", "#3c6ed4", "#d23434"];
-  const allColors = [...foundColors, ...extraPalette];
-
-  const coordKeys = Object.keys(sourceCoordinates);
-  function getSourceCoord(color) {
-    if (sourceCoordinates[color]) {
-      return sourceCoordinates[color];
+    if (dist < r) {
+      const factor = (r - dist) / r;
+      cell.style.transform = `scale(${1 + factor * 0.2}) translateZ(${factor * 10}px)`;
+      cell.style.backgroundColor = cell.classList.contains("inked") ? "#333" : "rgba(17, 17, 17, 0.15)";
+      if (cell.classList.contains("inked")) {
+        cell.style.borderColor = "#333";
+      }
+    } else {
+      cell.style.transform = "";
+      cell.style.backgroundColor = "";
+      cell.style.borderColor = "";
     }
-    // Fallback a una celda descubierta aleatoria
-    const randomColor = coordKeys[Math.floor(Math.random() * coordKeys.length)];
-    return sourceCoordinates[randomColor];
-  }
-
-  const dotsPerColor = 16;
-  const totalDots = allColors.length * dotsPerColor; // 160 puntos en total (16 por color)
-  const dots = [];
-
-  for (let i = 0; i < totalDots; i++) {
-    const dot = document.createElement("div");
-    dot.className = "next-dot";
-
-    const color = allColors[i % allColors.length];
-    dot.style.backgroundColor = color;
-    dot.dataset.colorValue = color;
-
-    // Posición inicial: exactamente en la celda de origen correspondiente
-    const source = getSourceCoord(color);
-    dot.style.top = `${source.top}%`;
-    dot.style.left = `${source.left}%`;
-    dot.style.transform = "scale(0) rotate(0deg)";
-    dot.style.opacity = "0";
-
-    // posición de destino guardada en dataset
-    const destTop = Math.random() * 80 + 10;   // 10–90%
-    const destLeft = Math.random() * 80 + 10;
-    dot.dataset.baseTop = destTop;
-    dot.dataset.baseLeft = destLeft;
-
-    // Asignar variables CSS de flotación con valores aleatorios para un movimiento orgánico
-    const floatDuration = 4 + Math.random() * 4; // Entre 4 y 8 segundos
-    const fx = (Math.random() - 0.5) * 20; // -10px a 10px
-    const fy = (Math.random() - 0.5) * 20;
-    const fx2 = (Math.random() - 0.5) * 20;
-    const fy2 = (Math.random() - 0.5) * 20;
-    
-    dot.style.setProperty("--float-duration", `${floatDuration}s`);
-    dot.style.setProperty("--float-x", `${fx}px`);
-    dot.style.setProperty("--float-y", `${fy}px`);
-    dot.style.setProperty("--float-x2", `${fx2}px`);
-    dot.style.setProperty("--float-y2", `${fy2}px`);
-
-    container.appendChild(dot);
-    dots.push(dot);
-  }
-
-  // Activar la explosión y el vuelo hacia el destino
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      dots.forEach((d) => {
-        // Retraso de animación aleatorio para dar el efecto de partículas
-        const delay = Math.random() * 0.4; // 0 a 400ms
-        const duration = 0.8 + Math.random() * 0.4; // 0.8s a 1.2s
-        const rotation = (Math.random() - 0.5) * 360; // giro aleatorio
-
-        d.style.transition = `
-          top ${duration}s cubic-bezier(0.19, 1, 0.22, 1) ${delay}s,
-          left ${duration}s cubic-bezier(0.19, 1, 0.22, 1) ${delay}s,
-          transform ${duration}s cubic-bezier(0.19, 1, 0.22, 1) ${delay}s,
-          opacity ${duration}s ease ${delay}s
-        `;
-
-        d.style.top = `${d.dataset.baseTop}%`;
-        d.style.left = `${d.dataset.baseLeft}%`;
-        d.style.transform = `scale(1) rotate(${rotation}deg)`;
-        d.style.opacity = "1";
-      });
-    });
   });
 
-  // Activar la clase de flotación una vez que los cuadritos se hayan asentado
-  setTimeout(() => {
-    dots.forEach((d) => {
-      d.classList.add("floating-active");
-    });
-  }, 1600);
+  requestAnimationFrame(animateColorWave);
+}
 
-  const colorQuadrants = {}; // colorValue -> quadrantKey
-  let activeColor = null;
-  let dragQuadrant = null;
+// ==========================================
+// STAGE 6 - SYLLABLE SORTING & UNIFICATION
+// ==========================================
+let sortOrder = [];
+let isSortingComplete = false;
 
-  // calcula cuadrante en función de la posición del cursor
-  function getQuadrant(clientX, clientY) {
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const xMid = vw / 2;
-    const yMid = vh / 2;
+function initSyllableSorting() {
+  isSortingComplete = false;
 
-    if (clientX < xMid && clientY < yMid) return "tl"; // top-left
-    if (clientX >= xMid && clientY < yMid) return "tr"; // top-right
-    if (clientX < xMid && clientY >= yMid) return "bl"; // bottom-left
-    return "br"; // bottom-right
-  }
+  // Syllables definitions
+  const syllables = [
+    { coords: CUA_COORDS, label: "CUA", color: "#74d643", glow: "rgba(116, 214, 67, 0.35)" },
+    { coords: DRI_COORDS, label: "DRI", color: "#d23434", glow: "rgba(210, 52, 52, 0.35)" },
+    { coords: CU_COORDS, label: "CU", color: "#f0cf3c", glow: "rgba(240, 207, 60, 0.35)" },
+    { coords: LAN_COORDS, label: "LAN", color: "#3c6ed4", glow: "rgba(60, 110, 212, 0.35)" },
+    { coords: D_COORDS.concat(O_COORDS), label: "DO", color: "#ffffff", glow: "rgba(255, 255, 255, 0.35)" }
+  ];
 
-  // centro de cada cuadrante (en %)
-  const quadrantCenters = {
-    tl: { top: 25, left: 25 },
-    tr: { top: 25, left: 75 },
-    bl: { top: 75, left: 25 },
-    br: { top: 75, left: 75 },
-  };
+  // Generate scrambled order that is NOT correct (i.e. not [0, 1, 2, 3, 4])
+  sortOrder = [0, 1, 2, 3, 4];
+  do {
+    sortOrder.sort(() => Math.random() - 0.5);
+  } while (sortOrder.join(",") === "0,1,2,3,4");
 
-  // Calcula los centros de cuadrículas de 4x4 para evitar que se solapen dentro de un cuadrante
-  function getGridCenters(cx, cy, count) {
-    const centers = [];
-    
-    // Calcular spacingX y spacingY basados en vmin para que los desplazamientos sean cuadrados
-    const spacingVmin = 14; // 14% del vmin para separar los grupos de 4x4
-    const spacingX = (spacingVmin * Math.min(window.innerWidth, window.innerHeight)) / window.innerWidth;
-    const spacingY = (spacingVmin * Math.min(window.innerWidth, window.innerHeight)) / window.innerHeight;
+  // Clear canvas
+  canvasEl.innerHTML = "";
 
-    if (count === 1) {
-      centers.push({ x: cx, y: cy });
-    } else if (count === 2) {
-      centers.push({ x: cx - spacingX / 2, y: cy });
-      centers.push({ x: cx + spacingX / 2, y: cy });
-    } else if (count === 3) {
-      centers.push({ x: cx - spacingX / 2, y: cy + spacingY / 4 });
-      centers.push({ x: cx + spacingX / 2, y: cy + spacingY / 4 });
-      centers.push({ x: cx, y: cy - spacingY / 2 });
-    } else {
-      const cols = Math.ceil(Math.sqrt(count));
-      const rows = Math.ceil(count / cols);
-      for (let i = 0; i < count; i++) {
-        const c = i % cols;
-        const r = Math.floor(i / cols);
-        const ox = (c - (cols - 1) / 2) * spacingX;
-        const oy = (r - (rows - 1) / 2) * spacingY;
-        centers.push({ x: cx + ox, y: cy + oy });
+  // Create container for unified label
+  const unifiedWordEl = document.createElement("div");
+  unifiedWordEl.id = "unified-word";
+  unifiedWordEl.className = "unified-word-label";
+  unifiedWordEl.textContent = "CUADRICULANDO";
+  canvasEl.appendChild(unifiedWordEl);
+
+  sortOrder.forEach((syllIdx, slotIdx) => {
+    const syll = syllables[syllIdx];
+    const card = document.createElement("div");
+    card.className = "sort-card";
+    card.dataset.index = syllIdx;
+    card.style.setProperty("--theme-color", syll.color);
+    card.style.setProperty("--theme-color-glow", syll.glow);
+
+    // Entry animation values: random scatter
+    card.style.opacity = "0";
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 300 + Math.random() * 200;
+    const flyX = Math.cos(angle) * dist;
+    const flyY = Math.sin(angle) * dist;
+    card.style.transform = `translate3d(${flyX}px, ${flyY}px, 0) scale(0.5) rotate(${Math.random() * 90 - 45}deg)`;
+
+    // Responsive left slot: cards occupy 18% width, slot intervals are 20%
+    const targetLeft = slotIdx * 20 + 1;
+
+    // Render 16x16 grid of mini cells inside the card
+    const cellPercent = 100 / GRID_SIZE;
+    const set = new Set(syll.coords.map(coord => coord[0] + "-" + coord[1]));
+
+    for (let r = 0; r < GRID_SIZE; r++) {
+      for (let c = 0; c < GRID_SIZE; c++) {
+        const cell = document.createElement("div");
+        cell.className = "mini-cell";
+        cell.style.width = `${cellPercent}%`;
+        cell.style.height = `${cellPercent}%`;
+        cell.style.left = `${c * cellPercent}%`;
+        cell.style.top = `${r * cellPercent}%`;
+
+        if (set.has(`${c}-${r}`)) {
+          cell.classList.add("inked");
+        }
+        card.appendChild(cell);
       }
     }
-    return centers;
-  }
 
-  function onPointerDown(e) {
-    const dot = e.target.closest(".next-dot");
-    if (!dot) return;
+    // Individual syllable label
+    const label = document.createElement("div");
+    label.className = "sort-card-label";
+    label.textContent = syll.label;
+    card.appendChild(label);
 
-    activeColor = dot.dataset.colorValue;
-    dragQuadrant = getQuadrant(e.clientX, e.clientY);
+    canvasEl.appendChild(card);
 
-    const center = quadrantCenters[dragQuadrant];
+    // Staggered entry animation trigger
+    setTimeout(() => {
+      card.style.transition = "transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.8s ease";
+      card.style.opacity = "1";
+      card.style.transform = "translate3d(0, 0, 0) scale(1) rotate(0deg)";
+      card.style.left = `${targetLeft}%`;
 
-    // acercamos los puntos de ese color hacia el centro del cuadrante y vibran
-    dots.forEach((d) => {
-      if (d.dataset.colorValue !== activeColor) return;
+      // Assign transition styles for sorting movements after entry completes
+      setTimeout(() => {
+        if (!isSortingComplete) {
+          card.style.transition = "left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.2s ease, box-shadow 0.2s ease";
+        }
+      }, 800);
+    }, slotIdx * 120);
 
-      const baseTop = parseFloat(d.dataset.baseTop);
-      const baseLeft = parseFloat(d.dataset.baseLeft);
+    // Setup drag-and-drop mechanics
+    setupCardDrag(card);
+  });
+}
 
-      const newTop = center.top + (baseTop - center.top) * 0.3;
-      const newLeft = center.left + (baseLeft - center.left) * 0.3;
+function setupCardDrag(card) {
+  let isDraggingCard = false;
+  let dragOffsetX = 0;
 
-      // Al arrastrar removemos la transición de explosión y usamos una transición de movimiento más rápida
-      d.style.transition = "top 0.35s ease, left 0.35s ease, transform 0.35s ease, opacity 0.35s ease";
-      d.style.top = `${newTop}%`;
-      d.style.left = `${newLeft}%`;
-      d.classList.add("near");
-    });
-  }
+  card.addEventListener("pointerdown", (e) => {
+    if (isSortingComplete) return;
+    isDraggingCard = true;
+    card.setPointerCapture(e.pointerId);
 
-  function onPointerMove(e) {
-    if (!activeColor) return;
+    const rect = canvasEl.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+    dragOffsetX = e.clientX - cardRect.left;
 
-    // mientras arrastras, actualizamos el cuadrante destino
-    dragQuadrant = getQuadrant(e.clientX, e.clientY);
-    const center = quadrantCenters[dragQuadrant];
+    card.classList.add("dragging");
+  });
 
-    dots.forEach((d) => {
-      if (d.dataset.colorValue !== activeColor) return;
+  card.addEventListener("pointermove", (e) => {
+    if (!isDraggingCard || isSortingComplete) return;
 
-      const baseTop = parseFloat(d.dataset.baseTop);
-      const baseLeft = parseFloat(d.dataset.baseLeft);
+    const rect = canvasEl.getBoundingClientRect();
+    let currentLeftPx = e.clientX - rect.left - dragOffsetX;
+    let newLeftPct = (currentLeftPx / rect.width) * 100;
 
-      const newTop = center.top + (baseTop - center.top) * 0.3;
-      const newLeft = center.left + (baseLeft - center.left) * 0.3;
+    // Clamp inside boundaries (1% to 81% left offset)
+    newLeftPct = Math.max(1, Math.min(81, newLeftPct));
+    card.style.left = `${newLeftPct}%`;
 
-      d.style.top = `${newTop}%`;
-      d.style.left = `${newLeft}%`;
-    });
-  }
+    const draggedIdx = parseInt(card.dataset.index);
+    const currentSlot = sortOrder.indexOf(draggedIdx);
 
-  function onPointerUp() {
-    if (!activeColor || !dragQuadrant) {
-      activeColor = null;
-      dragQuadrant = null;
-      return;
+    // Determine target slot by dividing current left percentage by slot width
+    let targetSlot = Math.round((newLeftPct - 1) / 20);
+    targetSlot = Math.max(0, Math.min(4, targetSlot));
+
+    if (targetSlot !== currentSlot) {
+      // Swap order inside the state array
+      const temp = sortOrder[currentSlot];
+      sortOrder[currentSlot] = sortOrder[targetSlot];
+      sortOrder[targetSlot] = temp;
+
+      // Animate the displaced card to its new slot position
+      const otherSyllIdx = sortOrder[currentSlot];
+      const otherCard = canvasEl.querySelector(`.sort-card[data-index="${otherSyllIdx}"]`);
+      if (otherCard) {
+        otherCard.style.left = `${currentSlot * 20 + 1}%`;
+      }
+    }
+  });
+
+  card.addEventListener("pointerup", (e) => {
+    if (!isDraggingCard) return;
+    isDraggingCard = false;
+    card.releasePointerCapture(e.pointerId);
+    card.classList.remove("dragging");
+
+    // Snap to its current slot position
+    const draggedIdx = parseInt(card.dataset.index);
+    const finalSlot = sortOrder.indexOf(draggedIdx);
+    card.style.left = `${finalSlot * 20 + 1}%`;
+
+    // Check if sorted order spells "CUA - DRI - CU - LAN - DO" (0,1,2,3,4)
+    if (sortOrder.join(",") === "0,1,2,3,4") {
+      unifySyllables();
+    }
+  });
+
+  card.addEventListener("pointercancel", (e) => {
+    if (!isDraggingCard) return;
+    isDraggingCard = false;
+    card.classList.remove("dragging");
+    const draggedIdx = parseInt(card.dataset.index);
+    const finalSlot = sortOrder.indexOf(draggedIdx);
+    card.style.left = `${finalSlot * 20 + 1}%`;
+  });
+}
+
+function unifySyllables() {
+  isSortingComplete = true;
+
+  const cards = canvasEl.querySelectorAll(".sort-card");
+  cards.forEach((card, idx) => {
+    card.style.transition = "left 0.8s cubic-bezier(0.25, 0.8, 0.25, 1), border-radius 0.8s ease, border-color 0.8s ease, box-shadow 0.8s ease";
+
+    // Slide together to form a unified block (width is 18%, left starts at 5%)
+    card.style.left = `${idx * 18 + 5}%`;
+
+    // Fade out individual labels
+    const label = card.querySelector(".sort-card-label");
+    if (label) {
+      label.style.transition = "opacity 0.5s ease";
+      label.style.opacity = "0";
     }
 
-    // Guardar el cuadrante destino para este color
-    colorQuadrants[activeColor] = dragQuadrant;
-
-    // Recalcular posiciones para todos los colores asignados a cuadrantes
-    const quadrants = ["tl", "tr", "bl", "br"];
-    quadrants.forEach((q) => {
-      const colorsInQuad = allColors.filter((color) => colorQuadrants[color] === q);
-      if (colorsInQuad.length === 0) return;
-
-      const center = quadrantCenters[q];
-      const gridCenters = getGridCenters(center.left, center.top, colorsInQuad.length);
-
-      colorsInQuad.forEach((color, colorIdx) => {
-        const gridCenter = gridCenters[colorIdx];
-        const colorDots = dots.filter((d) => d.dataset.colorValue === color);
-
-        // Calcular spacingX y spacingY basados en vmin para el espaciado interno de la cuadrícula de 4x4
-        const innerSpacingVmin = 3.0; // 3% del vmin para separar los cuadritos de la grilla
-        const spacingX = (innerSpacingVmin * Math.min(window.innerWidth, window.innerHeight)) / window.innerWidth;
-        const spacingY = (innerSpacingVmin * Math.min(window.innerWidth, window.innerHeight)) / window.innerHeight;
-
-        colorDots.forEach((d, dotIdx) => {
-          d.classList.remove("near");
-
-          // Cuadrícula de 4x4
-          const col = dotIdx % 4;
-          const row = Math.floor(dotIdx / 4);
-
-          const newLeft = gridCenter.x + (col - 1.5) * spacingX;
-          const newTop = gridCenter.y + (row - 1.5) * spacingY;
-
-          d.dataset.baseTop = newTop;
-          d.dataset.baseLeft = newLeft;
-
-          // Movimiento de transición suave al formar la cuadrícula
-          d.style.transition = `
-            top 0.6s cubic-bezier(0.19, 1, 0.22, 1),
-            left 0.6s cubic-bezier(0.19, 1, 0.22, 1),
-            transform 0.6s cubic-bezier(0.19, 1, 0.22, 1)
-          `;
-          d.style.top = `${newTop}%`;
-          d.style.left = `${newLeft}%`;
-        });
-      });
-    });
-
-    activeColor = null;
-    dragQuadrant = null;
-  }
-
-  container.addEventListener("pointerdown", onPointerDown);
-  container.addEventListener("pointermove", onPointerMove);
-  container.addEventListener("pointerup", onPointerUp);
-  container.addEventListener("pointerleave", onPointerUp);
-}
-
-/* ========== CLICK EN CELDAS ESPECIALES (TABLERO) ========== */
-
-function checkAllSpecialClicked() {
-  const specialCells = cells.filter((cell) =>
-    cell.classList.contains("special")
-  );
-
-  const allClicked = specialCells.every((cell) =>
-    cell.classList.contains("is-active")
-  );
-
-  if (allClicked) {
-    buildBlueGrid();
-    blueOverlayEl.classList.add("is-visible");
-  }
-}
-
-// Click en celdas especiales: solo en estado 4
-cells.forEach((cell) => {
-  if (!cell.classList.contains("special")) return;
-
-  cell.addEventListener("click", () => {
-    if (currentState !== 4) return;
-
-    cell.classList.add("is-active");
-    checkAllSpecialClicked();
-  });
-});
-
-/* ========== APLICAR ESTADO (sin animación de grupo) ========== */
-
-function applyStateSet(targetSet) {
-  cells.forEach((cell) => {
-    const k = cell.dataset.key;
-    cell.classList.toggle("on", targetSet.has(k));
-  });
-}
-
-/* ========== UTILIDADES DE TRANSICIÓN ========== */
-
-function diffNewCells(prevSet, nextSet) {
-  const result = [];
-  nextSet.forEach((k) => {
-    if (!prevSet.has(k)) result.push(k);
-  });
-  return result;
-}
-
-function animateTransition(prevSet, nextSet, onDone) {
-  const newCells = diffNewCells(prevSet, nextSet);
-
-  if (!newCells.length) {
-    applyStateSet(nextSet);
-    if (onDone) onDone();
-    return;
-  }
-
-  // 1. Crear el contenedor de animación temporal
-  const animContainer = document.createElement("div");
-  animContainer.className = "anim-container";
-  animContainer.style.transition = "none";
-  animContainer.style.transform = "rotate(-90deg) scale(0.3)";
-  animContainer.style.opacity = "0";
-  boardEl.appendChild(animContainer);
-
-  // 2. Crear las réplicas para cada nueva celda
-  newCells.forEach((key) => {
-    const [c, r] = key.split("-").map(Number);
-    const replica = document.createElement("div");
-    replica.className = "replica-square";
-    replica.style.left = `${c * 25}%`;
-    replica.style.top = `${r * 25}%`;
-    replica.style.width = "25%";
-    replica.style.height = "25%";
-    
-    // Transición individual de rotación
-    replica.style.transition = "none";
-    replica.style.transform = "scale(0.94) rotate(180deg)";
-    
-    animContainer.appendChild(replica);
+    // Apply seamless borders styling
+    setTimeout(() => {
+      card.classList.add("unified");
+    }, 400);
   });
 
-  // 3. Disparar la transición
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      // Configurar transiciones con curvas cubic-bezier (spring bounce)
-      animContainer.style.transition = "transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.8s ease";
-      animContainer.style.transform = "rotate(0deg) scale(1)";
-      animContainer.style.opacity = "1";
+  // Reveal unified text label
+  setTimeout(() => {
+    const unifiedLabel = document.getElementById("unified-word");
+    if (unifiedLabel) {
+      unifiedLabel.classList.add("show");
+    }
+  }, 800);
 
-      const replicas = animContainer.querySelectorAll(".replica-square");
-      replicas.forEach((replica) => {
-        replica.style.transition = "transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)";
-        replica.style.transform = "scale(0.94) rotate(0deg)";
-      });
-
-      // 4. Limpiar al finalizar la animación
-      setTimeout(() => {
-        applyStateSet(nextSet);
-        animContainer.remove();
-        if (onDone) onDone();
-      }, 850);
-    });
-  });
+  // Trigger final victory overlay after animations complete
+  setTimeout(() => {
+    triggerVictory();
+  }, 2200);
 }
-
-/* ========== INTERACCIÓN DE ARRASTRE ========== */
-
-let currentState = 1;
-applyStateSet(state1);
-
-const scene = document.getElementById("s-experimental");
-let dragging = false;
-let startX = 0;
-let lockTransition = false;
-
-function getX(e) {
-  if (e.touches && e.touches.length) return e.touches[0].clientX;
-  return e.clientX;
-}
-
-function onDown(e) {
-  dragging = true;
-  startX = getX(e);
-}
-
-function onMove(e) {
-  if (!dragging || lockTransition) return;
-  const delta = getX(e) - startX;
-  const abs = Math.abs(delta);
-
-  // 1 -> 2
-  if (abs > 80 && currentState === 1) {
-    lockTransition = true;
-    animateTransition(state1, state2On, () => {
-      currentState = 2;
-      lockTransition = false;
-    });
-  }
-
-  // 2 -> 3
-  if (abs > 160 && currentState === 2) {
-    lockTransition = true;
-    animateTransition(state2On, state3On, () => {
-      currentState = 3;
-      lockTransition = false;
-    });
-  }
-
-  // 3 -> 4 (cuadrícula completa)
-  if (abs > 240 && currentState === 3) {
-    lockTransition = true;
-    animateTransition(state3On, state4On, () => {
-      currentState = 4;
-      boardEl.classList.add("state-4");
-      instructionEl.classList.add("hidden");
-      lockTransition = false;
-    });
-  }
-}
-
-function onUp() {
-  dragging = false;
-}
-
-scene.addEventListener("pointerdown", onDown);
-scene.addEventListener("pointermove", onMove);
-scene.addEventListener("pointerup", onUp);
-scene.addEventListener("pointerleave", onUp);
-
-scene.addEventListener("touchstart", onDown, { passive: true });
-scene.addEventListener("touchmove", onMove, { passive: true });
-scene.addEventListener("touchend", onUp);
