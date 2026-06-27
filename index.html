@@ -7,8 +7,8 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Inter:wght@400;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=5.0">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Black+Han+Sans&family=Inter:wght@400;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=6.0">
 </head>
 <body>
 
@@ -40,8 +40,8 @@
   <a href="#sP" class="side-index__btn c-azul" aria-label="PIX">
     <span class="side-index__label">PIX</span>
   </a>
-  <a href="#s6" class="side-index__btn c-rojo" aria-label="Experiencia">
-    <span class="side-index__label">Experiencia</span>
+  <a href="#s6" class="side-index__btn c-rojo" aria-label="Sitio experimental">
+    <span class="side-index__label">Sitio experimental</span>
   </a>
 </nav>
 
@@ -68,7 +68,7 @@
     <span class="hero-letter hover-amarillo" id="lr">R</span>
     <span class="hero-letter hover-verde" id="li">I</span>
     <span class="hero-letter hover-rojo" id="lcu">C</span>
-    <span class="hero-letter hover-azul">U</span>
+    <span class="hero-letter hover-azul" id="lu">U</span>
     <span class="hero-letter hover-verde">L</span>
     <span class="hero-letter hover-amarillo">A</span>
     <span class="hero-letter hover-rojo" id="ln">N</span>
@@ -76,12 +76,6 @@
     <span class="hero-letter hover-verde">O</span>
   </h1>
 
-  <div class="hero-sq-container">
-    <div id="sq1" class="hero-sq sq-verde"></div>
-    <div id="sq2" class="hero-sq sq-amarillo"></div>
-    <div id="sq3" class="hero-sq sq-azul"></div>
-    <div id="sq4" class="hero-sq sq-rojo"></div>
-  </div>
 
   <div class="scroll-hint">
     <span>scroll</span>
@@ -123,9 +117,127 @@
     </p>
 
     <div class="botones-container">
-      <a href="#s3" class="enlace-accion">Cuadricula</a>
-      <a href="#s4" class="enlace-accion">Descifra</a>
-      <a href="#s5" class="enlace-accion">Ataca</a>
+      <div class="gesto-card">
+        <a href="#s3" class="enlace-accion">Cuadricula</a>
+        <div class="gesto-diagrama" id="diag-cuadricula">
+          <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
+            <!-- 16 Cells in spiral order -->
+            <rect class="grid-fill-cell" x="11" y="11" width="22" height="22" style="animation-delay: 0.1s;" />
+            <rect class="grid-fill-cell" x="39" y="11" width="22" height="22" style="animation-delay: 0.2s;" />
+            <rect class="grid-fill-cell" x="67" y="11" width="22" height="22" style="animation-delay: 0.3s;" />
+            <rect class="grid-fill-cell" x="95" y="11" width="22" height="22" style="animation-delay: 0.4s;" />
+            <rect class="grid-fill-cell" x="95" y="39" width="22" height="22" style="animation-delay: 0.5s;" />
+            <rect class="grid-fill-cell" x="95" y="67" width="22" height="22" style="animation-delay: 0.6s;" />
+            <rect class="grid-fill-cell" x="95" y="95" width="22" height="22" style="animation-delay: 0.7s;" />
+            <rect class="grid-fill-cell" x="67" y="95" width="22" height="22" style="animation-delay: 0.8s;" />
+            <rect class="grid-fill-cell" x="39" y="95" width="22" height="22" style="animation-delay: 0.9s;" />
+            <rect class="grid-fill-cell" x="11" y="95" width="22" height="22" style="animation-delay: 1.0s;" />
+            <rect class="grid-fill-cell" x="11" y="67" width="22" height="22" style="animation-delay: 1.1s;" />
+            <rect class="grid-fill-cell" x="11" y="39" width="22" height="22" style="animation-delay: 1.2s;" />
+            <rect class="grid-fill-cell" x="39" y="39" width="22" height="22" style="animation-delay: 1.3s;" />
+            <rect class="grid-fill-cell" x="67" y="39" width="22" height="22" style="animation-delay: 1.4s;" />
+            <rect class="grid-fill-cell" x="67" y="67" width="22" height="22" style="animation-delay: 1.5s;" />
+            <rect class="grid-fill-cell" x="39" y="67" width="22" height="22" style="animation-delay: 1.6s;" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="gesto-card">
+        <a href="#s4" class="enlace-accion">Descifra</a>
+        <div class="gesto-diagrama" id="diag-descifra">
+          <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true" style="overflow: hidden;">
+            <!-- Grid Underneath -->
+            <rect x="11" y="11" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            <rect x="39" y="11" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            <rect x="67" y="11" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            <rect x="95" y="11" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            
+            <rect x="11" y="39" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            <rect x="39" y="39" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            <rect x="67" y="39" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            <rect x="95" y="39" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            
+            <rect x="11" y="67" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            <rect x="39" y="67" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            <rect x="67" y="67" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            <rect x="95" y="67" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            
+            <rect x="11" y="95" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            <rect x="39" y="95" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            <rect x="67" y="95" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            <rect x="95" y="95" width="22" height="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+
+            <!-- Colored tokens underneath -->
+            <!-- Red Square Fichas Underneath (same style as Cuadricula cells but Red) -->
+            <rect x="95" y="11" width="22" height="22" fill="var(--rojo)" stroke="var(--rojo)" stroke-width="1.2" />
+            <rect x="39" y="39" width="22" height="22" fill="var(--rojo)" stroke="var(--rojo)" stroke-width="1.2" />
+            <rect x="67" y="67" width="22" height="22" fill="var(--rojo)" stroke="var(--rojo)" stroke-width="1.2" />
+            <rect x="11" y="95" width="22" height="22" fill="var(--rojo)" stroke="var(--rojo)" stroke-width="1.2" />
+
+            <!-- La Paleta (Sliding Tapa) -->
+            <g class="paleta-deslizable">
+              <!-- Rectangular Stick Handle (Varilla/Palo) extending from center-right -->
+              <rect x="109" y="61" width="20" height="6" fill="#2b2f33" stroke="#ffffff" stroke-width="1.5" />
+              <!-- Completely Square Main Plate -->
+              <rect x="11" y="11" width="106" height="106" fill="#2b2f33" stroke="#ffffff" stroke-width="2" />
+              <!-- White grid lines matching the 3D palette texture -->
+              <line x1="36" y1="11" x2="36" y2="117" stroke="#ffffff" stroke-width="1.5"/>
+              <line x1="64" y1="11" x2="64" y2="117" stroke="#ffffff" stroke-width="1.5"/>
+              <line x1="92" y1="11" x2="92" y2="117" stroke="#ffffff" stroke-width="1.5"/>
+              <line x1="11" y1="36" x2="117" y2="36" stroke="#ffffff" stroke-width="1.5"/>
+              <line x1="11" y1="64" x2="117" y2="64" stroke="#ffffff" stroke-width="1.5"/>
+              <line x1="11" y1="92" x2="117" y2="92" stroke="#ffffff" stroke-width="1.5"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="gesto-card">
+        <a href="#s5" class="enlace-accion">Ataca</a>
+        <div class="gesto-diagrama" id="diag-ataca">
+          <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
+            <!-- Dark Board Grid (like the palette grid) -->
+            <rect class="board-grid-cell" x="11" y="11" width="22" height="22" />
+            <rect class="board-grid-cell" x="39" y="11" width="22" height="22" />
+            <rect class="board-grid-cell" x="67" y="11" width="22" height="22" />
+            <rect class="board-grid-cell" x="95" y="11" width="22" height="22" />
+            
+            <rect class="board-grid-cell" x="11" y="39" width="22" height="22" />
+            <rect class="board-grid-cell" x="39" y="39" width="22" height="22" />
+            <rect class="board-grid-cell" x="67" y="39" width="22" height="22" />
+            <rect class="board-grid-cell" x="95" y="39" width="22" height="22" />
+            
+            <rect class="board-grid-cell" x="11" y="67" width="22" height="22" />
+            <rect class="board-grid-cell" x="39" y="67" width="22" height="22" />
+            <rect class="board-grid-cell" x="67" y="67" width="22" height="22" />
+            <rect class="board-grid-cell" x="95" y="67" width="22" height="22" />
+            
+            <rect class="board-grid-cell" x="11" y="95" width="22" height="22" />
+            <rect class="board-grid-cell" x="39" y="95" width="22" height="22" />
+            <rect class="board-grid-cell" x="67" y="95" width="22" height="22" />
+            <rect class="board-grid-cell" x="95" y="95" width="22" height="22" />
+
+            <!-- Three Cross pieces (X) falling in sequentially -->
+            <!-- Cross 1 at R0C1 (center 50, 22) -->
+            <g class="cross-piece cross-piece-1">
+              <!-- Gray Square Token Body -->
+              <rect x="40" y="12" width="20" height="20" fill="#7a888e" />
+              <!-- X cutout hole simulated with background grid cell color -->
+              <path d="M44,16 L56,28 M56,16 L44,28" stroke="#141414" stroke-width="3" stroke-linecap="round"/>
+            </g>
+            <!-- Cross 2 at R2C2 (center 78, 78) -->
+            <g class="cross-piece cross-piece-2">
+              <rect x="68" y="68" width="20" height="20" fill="#7a888e" />
+              <path d="M72,72 L84,84 M84,72 L72,84" stroke="#141414" stroke-width="3" stroke-linecap="round"/>
+            </g>
+            <!-- Cross 3 at R3C0 (center 22, 106) -->
+            <g class="cross-piece cross-piece-3">
+              <rect x="12" y="96" width="20" height="20" fill="#7a888e" />
+              <path d="M16,100 L28,112 M28,100 L16,112" stroke="#141414" stroke-width="3" stroke-linecap="round"/>
+            </g>
+          </svg>
+        </div>
+      </div>
     </div>
 
     <p class="t-body center-text" id="sG-text-2">
@@ -258,9 +370,17 @@
   <!-- GALERÍA -->
   <section class="screen section-blocks" id="s-gallery" aria-labelledby="gallery-heading">
     <div class="carousel-wrap" data-col="1" data-row="1">
-      <button class="gallery-arrow" id="gallery-prev" type="button" aria-label="Foto anterior">&larr;</button>
+      <button class="gallery-arrow" id="gallery-prev" type="button" aria-label="Foto anterior">
+        <svg viewBox="0 0 100 100" width="22" height="22" fill="currentColor">
+          <path d="M80,40 L50,40 L50,10 L10,50 L50,90 L50,60 L80,60 Z"/>
+        </svg>
+      </button>
       <div class="gallery-track" id="gallery-track" role="region" aria-label="Galería de fotos"></div>
-      <button class="gallery-arrow" id="gallery-next" type="button" aria-label="Foto siguiente">&rarr;</button>
+      <button class="gallery-arrow" id="gallery-next" type="button" aria-label="Foto siguiente">
+        <svg viewBox="0 0 100 100" width="22" height="22" fill="currentColor">
+          <path d="M20,40 L50,40 L50,10 L90,50 L50,90 L50,60 L20,60 Z"/>
+        </svg>
+      </button>
     </div>
   </section>
 
@@ -306,19 +426,31 @@
     </div>
   </section>
 
-  <!-- EXPERIENCIA -->
+  <div class="sep-row">
+    <span class="sep-dot dot-verde"></span>
+    <span class="sep-dot dot-amarillo"></span>
+    <span class="sep-dot dot-azul"></span>
+    <span class="sep-dot dot-rojo"></span>
+  </div>
+
+  <!-- SITIO EXPERIMENTAL & EXPERIENCIA -->
   <section class="screen" id="s6" onclick="window.open('experimental.html?v=25.0', '_blank')">
+    <h2 class="t-title center-title" id="s-experimental-title">Sitio experimental</h2>
+    <p class="t-body center-text" id="s-experimental-text">
+      El sitio experimental se desarrolla a partir del concepto central “revelación progresiva” y de los gestos identificados en el juego: cuadricular y descifrar. La propuesta se trabaja como una experiencia de exploración en la que el usuario debe interactuar con la interfaz para descubrir información que está oculta.
+    </p>
+
     <h2 class="t-title interactive-title" id="s6-title">
       <span class="text-default">PRUEBA LA EXPERIENCIA</span>
       <span class="text-hover">NO TE CONFÍES</span>
     </h2>
 
-    <div class="title-arrow" id="s6-arrow">→</div>
+    <div class="title-arrow" id="s6-arrow">
+      <svg viewBox="0 0 100 100" width="36" height="36" fill="currentColor">
+        <path d="M20,40 L50,40 L50,10 L90,50 L50,90 L50,60 L20,60 Z"/>
+      </svg>
+    </div>
 
-    <div id="f1" class="dot dot-verde"></div>
-    <div id="f2" class="dot dot-amarillo"></div>
-    <div id="f3" class="dot dot-azul"></div>
-    <div id="f4" class="dot dot-rojo"></div>
     <div id="f5" class="dot dot-verde"></div>
     <div id="f6" class="dot dot-amarillo"></div>
     <div id="f7" class="dot dot-azul"></div>
@@ -351,7 +483,7 @@
     <img id="lightbox-image" src="" alt="Vista ampliada">
     <div id="lightbox-3d-container" style="display: none; width: 100%; height: 100%; position: relative;">
       <div class="controls-3d" aria-label="Controles del visor 3D">
-        <button class="btn-3d is-active" id="btn-3d-rotate" type="button" aria-label="Rotación automática">Auto Gira</button>
+        <button class="btn-3d is-active" id="btn-3d-rotate" type="button" aria-label="Rotación automática">Rotación automática</button>
         <button class="btn-3d" id="btn-3d-top" type="button" aria-label="Vista superior">Cenital</button>
         <button class="btn-3d" id="btn-3d-persp" type="button" aria-label="Vista perspectiva">Perspectiva</button>
       </div>
@@ -361,7 +493,7 @@
     </div>
     <div id="lightbox-box3d-container" style="display: none; width: 100%; height: 100%; position: relative;">
       <div class="controls-3d" aria-label="Controles del visor de la caja 3D">
-        <button class="btn-3d is-active" id="btn-box3d-rotate" type="button" aria-label="Rotación automática">Auto Gira</button>
+        <button class="btn-3d is-active" id="btn-box3d-rotate" type="button" aria-label="Rotación automática">Rotación automática</button>
         <button class="btn-3d" id="btn-box3d-top" type="button" aria-label="Vista superior">Cenital</button>
         <button class="btn-3d" id="btn-box3d-persp" type="button" aria-label="Vista perspectiva">Perspectiva</button>
       </div>
@@ -371,7 +503,7 @@
     </div>
     <div id="lightbox-cards3d-container" style="display: none; width: 100%; height: 100%; position: relative;">
       <div class="controls-3d" aria-label="Controles del visor de la caja de cartas 3D">
-        <button class="btn-3d is-active" id="btn-cards3d-rotate" type="button" aria-label="Rotación automática">Auto Gira</button>
+        <button class="btn-3d is-active" id="btn-cards3d-rotate" type="button" aria-label="Rotación automática">Rotación automática</button>
         <button class="btn-3d" id="btn-cards3d-top" type="button" aria-label="Vista superior">Cenital</button>
         <button class="btn-3d" id="btn-cards3d-persp" type="button" aria-label="Vista perspectiva">Perspectiva</button>
       </div>
@@ -381,7 +513,7 @@
     </div>
     <div id="lightbox-ruleta3d-container" style="display: none; width: 100%; height: 100%; position: relative;">
       <div class="controls-3d" aria-label="Controles del visor de la ruleta 3D">
-        <button class="btn-3d is-active" id="btn-ruleta3d-rotate" type="button" aria-label="Rotación automática">Auto Gira</button>
+        <button class="btn-3d is-active" id="btn-ruleta3d-rotate" type="button" aria-label="Rotación automática">Rotación automática</button>
         <button class="btn-3d" id="btn-ruleta3d-top" type="button" aria-label="Vista frontal">Frontal</button>
         <button class="btn-3d" id="btn-ruleta3d-persp" type="button" aria-label="Vista perspectiva">Perspectiva</button>
         <button class="btn-3d" id="btn-ruleta3d-spin" type="button" aria-label="Girar ruleta" style="background-color: #d23434; color: white; border-color: #d23434;">¡Girar!</button>
@@ -392,7 +524,7 @@
     </div>
     <div id="lightbox-cuadriculas3d-container" style="display: none; width: 100%; height: 100%; position: relative;">
       <div class="controls-3d" aria-label="Controles del visor de las cuadrículas 3D">
-        <button class="btn-3d is-active" id="btn-cuadriculas3d-rotate" type="button" aria-label="Rotación automática">Auto Gira</button>
+        <button class="btn-3d is-active" id="btn-cuadriculas3d-rotate" type="button" aria-label="Rotación automática">Rotación automática</button>
         <button class="btn-3d" id="btn-cuadriculas3d-top" type="button" aria-label="Vista frontal">Frontal</button>
         <button class="btn-3d" id="btn-cuadriculas3d-persp" type="button" aria-label="Vista perspectiva">Perspectiva</button>
       </div>
@@ -402,9 +534,19 @@
     </div>
     <div id="lightbox-pieces3d-container" style="display: none; width: 100%; height: 100%; position: relative;">
       <div class="controls-3d" aria-label="Controles del visor de las fichas especiales 3D">
-        <button class="btn-3d is-active" id="btn-pieces3d-rotate" type="button" aria-label="Rotación automática">Auto Gira</button>
+        <button class="btn-3d is-active" id="btn-pieces3d-rotate" type="button" aria-label="Rotación automática">Rotación automática</button>
         <button class="btn-3d" id="btn-pieces3d-top" type="button" aria-label="Vista frontal">Frontal</button>
         <button class="btn-3d" id="btn-pieces3d-persp" type="button" aria-label="Vista perspectiva">Perspectiva</button>
+      </div>
+      <div class="hint-3d" aria-hidden="true">
+        <p>Arrastra para girar las piezas o haz clic en la pila para agruparlas o esparcirlas</p>
+      </div>
+    </div>
+    <div id="lightbox-acrylic3d-container" style="display: none; width: 100%; height: 100%; position: relative;">
+      <div class="controls-3d" aria-label="Controles del visor de las piezas de acrílico 3D">
+        <button class="btn-3d is-active" id="btn-acrylic3d-rotate" type="button" aria-label="Rotación automática">Rotación automática</button>
+        <button class="btn-3d" id="btn-acrylic3d-top" type="button" aria-label="Vista frontal">Frontal</button>
+        <button class="btn-3d" id="btn-acrylic3d-persp" type="button" aria-label="Vista perspectiva">Perspectiva</button>
       </div>
       <div class="hint-3d" aria-hidden="true">
         <p>Arrastra para girar las piezas o haz clic en la pila para agruparlas o esparcirlas</p>
@@ -421,7 +563,8 @@
 <script src="ruleta3d.js?v=4.0" defer></script>
 <script src="cuadriculas3d.js?v=3.0" defer></script>
 <script src="pieces3d.js?v=1.0" defer></script>
-<script src="script.js?v=7.0" defer></script>
+<script src="acrylic3d.js?v=1.0" defer></script>
+<script src="script.js?v=7.4" defer></script>
 
 <script>
   const sections = document.querySelectorAll('section[id]');

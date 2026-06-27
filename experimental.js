@@ -168,7 +168,7 @@ const STAGE3_SEQUENCE = [0, 2, 1, 3, 0, 3]; // Rojo -> Amarillo -> Azul -> Verde
 const GRID_SIZE = 16;
 
 // State Variables
-let currentStage = 1; // 1 = DO, 2 = CUA, 3 = CU
+let currentStage = 1; // 1 = DO, 2 = CUA, 3 = CU, 4 = DRI, 5 = LAN, 6 = SORT
 let currentDrag = 0; // 0 to 6 (Stage 1 swipes)
 let currentClicks = 0; // 0 to 6 (Stage 2 hotspot clicks)
 let activatedHotspots = new Set(); // Column slices already revealed in Stage 2
@@ -178,6 +178,17 @@ let sequencePlaybackTimeout = null; // Reference to cancel playback
 let scratchedInkedCount = 0; // Number of inked cells revealed in Level 4
 let isScratching = false; // State to track free scratching drag in Level 4
 let stage5LockedCount = 0; // Number of permanently locked cells in Level 5
+let lanFloaters = [];
+let currentLanPlaced = 0;
+
+const LAN_MISSING = [
+  { x: 3, y: 11 },
+  { x: 8, y: 4 },
+  { x: 8, y: 8 },
+  { x: 13, y: 6 },
+  { x: 14, y: 9 },
+  { x: 15, y: 11 }
+];
 let isDragging = false;
 let startX = 0;
 let startY = 0;
@@ -186,6 +197,153 @@ let inactivityTimer = null;
 let phantom = { x: 8, y: 8, vx: 0.08, vy: 0.08 }; // Floating phantom cursor particle
 let userPointer = { active: false, x: 8, y: 8, lastActive: 0 }; // Track user pointer coordinates
 let victoryCells = []; // Active DOM elements for victory screen wave
+
+// ==========================================
+// AUDIO SYNTHESIZER (WEB AUDIO API)
+// ==========================================
+const AudioSynth = {
+  ctx: null,
+
+  init() {
+    if (this.ctx) return;
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) {
+      this.ctx = new AudioContextClass();
+    }
+  },
+
+  playSwipe() {
+    this.init();
+    if (!this.ctx) return;
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    
+    osc.type = 'triangle';
+    const t = this.ctx.currentTime;
+    
+    osc.frequency.setValueAtTime(220, t);
+    osc.frequency.exponentialRampToValueAtTime(580, t + 0.25);
+    
+    gain.gain.setValueAtTime(0.2, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+    
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    
+    osc.start(t);
+    osc.stop(t + 0.26);
+  },
+
+  playHotspot() {
+    this.init();
+    if (!this.ctx) return;
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    
+    osc.type = 'sine';
+    const t = this.ctx.currentTime;
+    
+    osc.frequency.setValueAtTime(880, t);
+    osc.frequency.exponentialRampToValueAtTime(440, t + 0.35);
+    
+    gain.gain.setValueAtTime(0.25, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+    
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    
+    osc.start(t);
+    osc.stop(t + 0.36);
+  },
+
+  playSimonTone(index) {
+    this.init();
+    if (!this.ctx) return;
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    
+    const frequencies = [261.63, 329.63, 392.00, 523.25];
+    const freq = frequencies[index] || 440;
+    
+    osc.type = 'triangle';
+    const t = this.ctx.currentTime;
+    
+    osc.frequency.setValueAtTime(freq, t);
+    
+    gain.gain.setValueAtTime(0.001, t);
+    gain.gain.linearRampToValueAtTime(0.25, t + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+    
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    
+    osc.start(t);
+    osc.stop(t + 0.45);
+  },
+
+  playError() {
+    this.init();
+    if (!this.ctx) return;
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    
+    osc.type = 'sawtooth';
+    const t = this.ctx.currentTime;
+    
+    osc.frequency.setValueAtTime(120, t);
+    
+    gain.gain.setValueAtTime(0.22, t);
+    gain.gain.linearRampToValueAtTime(0.001, t + 0.35);
+    
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    
+    osc.start(t);
+    osc.stop(t + 0.36);
+  },
+
+  playScratch() {
+    this.init();
+    if (!this.ctx) return;
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+
+    const bufferSize = this.ctx.sampleRate * 0.08;
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    
+    const noiseNode = this.ctx.createBufferSource();
+    noiseNode.buffer = buffer;
+    
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 1400;
+    filter.Q.value = 3.0;
+    
+    const gain = this.ctx.createGain();
+    const t = this.ctx.currentTime;
+    
+    gain.gain.setValueAtTime(0.06, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+    
+    noiseNode.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.ctx.destination);
+    
+    noiseNode.start(t);
+  }
+};
 
 // DOM elements
 const canvasEl = document.getElementById("interaction-canvas");
@@ -296,6 +454,9 @@ function initGame() {
   } else if (currentStage === 4) {
     DRI_COORDS.forEach(([x, y]) => letterSet.add(`${x}-${y}`));
     document.getElementById("hint-text").textContent = "Arrastra sobre el tablero para raspar y revelar el patrón";
+  } else if (currentStage === 5) {
+    LAN_COORDS.forEach(([x, y]) => letterSet.add(`${x}-${y}`));
+    document.getElementById("hint-text").textContent = "Arrastra los cuadros flotantes para formar la sílaba LAN";
   } else {
     document.getElementById("hint-text").textContent = "Arrastra y ordena las sílabas para descifrar CUADRICULANDO";
   }
@@ -323,6 +484,15 @@ function initGame() {
     victoryOverlayEl.classList.remove("show");
   }
 
+  // Clean up any remaining floaters from Stage 5
+  if (typeof lanFloaters !== 'undefined' && lanFloaters.length > 0) {
+    lanFloaters.forEach(f => {
+      if (f.element) f.element.remove();
+    });
+    lanFloaters = [];
+  }
+  currentLanPlaced = 0;
+
   // Reset phantom position to center
   phantom.x = GRID_SIZE / 2;
   phantom.y = GRID_SIZE / 2;
@@ -332,8 +502,8 @@ function initGame() {
   // Update Header indicators
   updateHeader();
 
-  // If Stage 5 (Syllable sorting), run it and return
-  if (currentStage === 5) {
+  // If Stage 6 (Syllable sorting), run it and return
+  if (currentStage === 6) {
     canvasEl.classList.add("sorting-mode");
     wrapperEl.classList.add("sorting-mode");
     initSyllableSorting();
@@ -349,7 +519,7 @@ function initGame() {
   for (let r = 0; r < GRID_SIZE; r++) {
     for (let c = 0; c < GRID_SIZE; c++) {
       const cell = document.createElement("div");
-      if (currentStage === 3) {
+      if (currentStage === 3 || currentStage === 5) {
         cell.className = "grid-cell revealed";
       } else {
         cell.className = "grid-cell blackout";
@@ -363,6 +533,19 @@ function initGame() {
       cell.dataset.x = c;
       cell.dataset.y = r;
       cell.dataset.key = key;
+
+      // In Stage 5, pre-ink non-missing cells and set placeholder styles
+      if (currentStage === 5) {
+        cell.style.pointerEvents = "none";
+        if (letterSet.has(key)) {
+          const isMissing = LAN_MISSING.some(m => m.x === c && m.y === r);
+          if (isMissing) {
+            cell.classList.add("lan-target-placeholder");
+          } else {
+            cell.classList.add("inked");
+          }
+        }
+      }
 
       // Stage 3 Simon Node styling
       const simonNodeIndex = STAGE3_NODES.findIndex(n => n.x === c && n.y === r);
@@ -391,12 +574,17 @@ function initGame() {
       playStage3Sequence();
     }, 1200);
   }
+
+  // Trigger stage 5 floaters initialization
+  if (currentStage === 5) {
+    initLanFloaters();
+  }
 }
 
 function updateHeader() {
   const progressContainerEl = document.querySelector(".progress-container");
   if (progressContainerEl) {
-    if (currentStage === 5) {
+    if (currentStage === 6) {
       progressContainerEl.style.display = "none";
     } else {
       progressContainerEl.style.display = "flex";
@@ -412,6 +600,8 @@ function updateHeader() {
   } else if (currentStage === 4) {
     const percent = Math.min(100, Math.floor((scratchedInkedCount / 40) * 100));
     dragCounterEl.textContent = `RASPADO: ${percent}%`;
+  } else if (currentStage === 5) {
+    dragCounterEl.textContent = `COLOCADOS: ${currentLanPlaced} / 6`;
   } else {
     dragCounterEl.textContent = `ORDENAR SÍLABAS`;
   }
@@ -421,6 +611,7 @@ function updateHeader() {
   else if (currentStage === 2) currentCount = currentClicks;
   else if (currentStage === 3) currentCount = stage3UserClicks.length;
   else if (currentStage === 4) currentCount = Math.min(6, Math.floor((scratchedInkedCount / 40) * 6));
+  else if (currentStage === 5) currentCount = currentLanPlaced;
   else currentCount = 0;
 
   for (let i = 1; i <= 6; i++) {
@@ -441,7 +632,7 @@ function updateHeader() {
 
 function onPointerDown(e) {
   if (victoryOverlayEl && victoryOverlayEl.classList.contains("show")) return;
-  if (currentStage === 5) return;
+  if (currentStage === 6) return;
   if (currentStage === 1) {
     if (currentDrag >= 6) return;
     isDragging = true;
@@ -457,7 +648,7 @@ function onPointerDown(e) {
 
 function onPointerMove(e) {
   if (victoryOverlayEl && victoryOverlayEl.classList.contains("show")) return;
-  if (currentStage === 5) return;
+  if (currentStage === 6) return;
   if (currentStage === 1) {
     if (!isDragging) return;
 
@@ -489,7 +680,7 @@ function onPointerMove(e) {
 
 function onPointerUp(e) {
   if (victoryOverlayEl && victoryOverlayEl.classList.contains("show")) return;
-  if (currentStage === 5) return;
+  if (currentStage === 6) return;
   if (currentStage === 1) {
     if (!isDragging) return;
     isDragging = false;
@@ -510,6 +701,7 @@ function onPointerUp(e) {
 function revealNextBatch() {
   currentDrag++;
   updateHeader();
+  AudioSynth.playSwipe();
 
   const activeCols = DRAG_COLUMNS[currentDrag];
   const cellsToReveal = [];
@@ -581,6 +773,7 @@ function onCellClick(c, r) {
     // Flash clicked node for immediate feedback
     if (cell) {
       cell.classList.add("flash-active");
+      AudioSynth.playSimonTone(simonIndex);
       setTimeout(() => {
         cell.classList.remove("flash-active");
       }, 200);
@@ -604,6 +797,7 @@ function onCellClick(c, r) {
       setSimonNodesActive(false); // Disable breathing during shake/replay
       wrapperEl.classList.add("shake-grid");
       document.getElementById("hint-text").textContent = "¡Incorrecto! Observa de nuevo";
+      AudioSynth.playError();
       
       // Reset clicks and update header
       stage3UserClicks = [];
@@ -614,7 +808,7 @@ function onCellClick(c, r) {
         playStage3Sequence();
       }, 1200);
     }
-  } else if (currentStage === 5) {
+  } else if (currentStage === 6) {
     if (isSequencePlaying) return;
     
     // Always emit a sonar pulse from clicked cell
@@ -673,6 +867,7 @@ function playStage3Sequence() {
     
     if (cell) {
       cell.classList.add("flash-active");
+      AudioSynth.playSimonTone(nodeIndex);
       setTimeout(() => {
         cell.classList.remove("flash-active");
       }, 500);
@@ -743,6 +938,7 @@ function scratchCellAtPointer(e) {
 function revealScratchedCell(cell, key) {
   cell.classList.remove("blackout");
   cell.classList.add("revealed");
+  AudioSynth.playScratch();
   
   const isInked = letterSet.has(key);
   if (isInked) {
@@ -826,7 +1022,7 @@ function triggerSonarPulse(cx, cy) {
     if (!list || list.length === 0) continue;
     
     setTimeout(() => {
-      if (currentStage !== 5 || victoryOverlayEl.classList.contains("show")) return;
+      if (currentStage !== 6 || victoryOverlayEl.classList.contains("show")) return;
       
       list.forEach(cell => {
         const key = cell.dataset.key;
@@ -859,6 +1055,7 @@ function revealHotspotColumns(sliceIndex) {
 
   currentClicks++;
   updateHeader();
+  AudioSynth.playHotspot();
 
   const activeCols = DRAG_COLUMNS[sliceIndex];
   const cellsToReveal = [];
@@ -909,7 +1106,7 @@ function revealHotspotColumns(sliceIndex) {
 function triggerVictory() {
   const victoryGridAssembledEl = document.getElementById("victory-grid-assembled");
 
-  if (currentStage === 5) {
+  if (currentStage === 6) {
     if (victoryGridEl) victoryGridEl.style.display = "none";
     if (victoryGridAssembledEl) {
       victoryGridAssembledEl.style.display = "flex";
@@ -1043,6 +1240,10 @@ function triggerVictory() {
     document.getElementById("victory-word").textContent = "¡DESCIFRADO!";
     document.getElementById("victory-subtitle").textContent = "Patrón completado raspando el tablero";
     if (btnNextEl) btnNextEl.style.display = "block";
+  } else if (currentStage === 5) {
+    document.getElementById("victory-word").textContent = "¡DESCIFRADO!";
+    document.getElementById("victory-subtitle").textContent = "Patrón completado ordenando los cuadros flotantes";
+    if (btnNextEl) btnNextEl.style.display = "block";
   } else {
     document.getElementById("victory-word").textContent = "¡CUADRICULANDO!";
     document.getElementById("victory-subtitle").textContent = "Has ordenado las sílabas completando la palabra";
@@ -1084,6 +1285,37 @@ function animateColorWave() {
   phantom.x += (targetX - phantom.x) * 0.08;
   phantom.y += (targetY - phantom.y) * 0.08;
 
+  // Update LAN floaters physics in Stage 5
+  if (currentStage === 5 && typeof lanFloaters !== 'undefined' && lanFloaters.length > 0) {
+    lanFloaters.forEach(floater => {
+      if (!floater.isDragged && !floater.isSnapped) {
+        floater.px += floater.vx;
+        floater.py += floater.vy;
+
+        // Bounce off walls (0 to 100 minus size)
+        const sizePct = 100 / GRID_SIZE;
+        if (floater.px < 0) {
+          floater.px = 0;
+          floater.vx *= -1;
+        } else if (floater.px > 100 - sizePct) {
+          floater.px = 100 - sizePct;
+          floater.vx *= -1;
+        }
+
+        if (floater.py < 0) {
+          floater.py = 0;
+          floater.vy *= -1;
+        } else if (floater.py > 100 - sizePct) {
+          floater.py = 100 - sizePct;
+          floater.vy *= -1;
+        }
+
+        floater.element.style.left = `${floater.px}%`;
+        floater.element.style.top = `${floater.py}%`;
+      }
+    });
+  }
+
   // 1. Gameplay cells (Apply dynamic dome ripple to both revealed and blackout cells)
   for (const key in cellsMap) {
     const cell = cellsMap[key];
@@ -1099,7 +1331,7 @@ function animateColorWave() {
       if (dist < r) {
         const factor = (r - dist) / r;
         cell.style.transform = `scale(${1 + factor * 0.2}) translateZ(${factor * 10}px)`;
-        if (!cell.classList.contains("simon-node")) {
+        if (!cell.classList.contains("simon-node") && !cell.classList.contains("lan-target-placeholder")) {
           cell.style.backgroundColor = cell.classList.contains("inked") ? "#333" : "rgba(17, 17, 17, 0.15)";
           if (cell.classList.contains("inked")) {
             cell.style.borderColor = "#333";
@@ -1107,7 +1339,7 @@ function animateColorWave() {
         }
       } else {
         cell.style.transform = "";
-        if (!cell.classList.contains("simon-node")) {
+        if (!cell.classList.contains("simon-node") && !cell.classList.contains("lan-target-placeholder")) {
           cell.style.backgroundColor = "";
           cell.style.borderColor = "";
         }
@@ -1187,6 +1419,219 @@ function animateColorWave() {
   });
 
   requestAnimationFrame(animateColorWave);
+}
+
+// ==========================================
+// STAGE 5 - LAN FLOATING SQUARES
+// ==========================================
+function initLanFloaters() {
+  if (lanFloaters && lanFloaters.length > 0) {
+    lanFloaters.forEach(f => {
+      if (f.element) f.element.remove();
+    });
+  }
+  lanFloaters = [];
+  currentLanPlaced = 0;
+
+  const missingCoords = [
+    { x: 3, y: 11 },
+    { x: 8, y: 4 },
+    { x: 8, y: 8 },
+    { x: 13, y: 6 },
+    { x: 14, y: 9 },
+    { x: 15, y: 11 }
+  ];
+
+  missingCoords.forEach(coord => {
+    const floaterEl = document.createElement("div");
+    floaterEl.className = "lan-floater";
+    
+    // Choose random starting position outside the target area
+    let startX, startY;
+    do {
+      startX = Math.random() * 85 + 5; // percentage: 5% to 90%
+      startY = Math.random() * 85 + 5;
+    } while (Math.abs(startX - coord.x * 6.25) < 15 && Math.abs(startY - coord.y * 6.25) < 15);
+
+    floaterEl.style.left = `${startX}%`;
+    floaterEl.style.top = `${startY}%`;
+
+    // Random velocity
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 0.08 + Math.random() * 0.06; // speed in percentage per frame
+    const vx = Math.cos(angle) * speed;
+    const vy = Math.sin(angle) * speed;
+
+    canvasEl.appendChild(floaterEl);
+
+    const floater = {
+      element: floaterEl,
+      c: coord.x,
+      r: coord.y,
+      px: startX,
+      py: startY,
+      vx: vx,
+      vy: vy,
+      isDragged: false,
+      isSnapped: false
+    };
+
+    setupFloaterDrag(floater);
+    lanFloaters.push(floater);
+  });
+}
+
+function setupFloaterDrag(floater) {
+  let startPointerX = 0;
+  let startPointerY = 0;
+  let startFloaterPx = 0;
+  let startFloaterPy = 0;
+
+  floater.element.addEventListener("pointerdown", (e) => {
+    if (floater.isSnapped) return;
+    floater.isDragged = true;
+    floater.element.setPointerCapture(e.pointerId);
+
+    const rect = canvasEl.getBoundingClientRect();
+    startPointerX = e.clientX;
+    startPointerY = e.clientY;
+    startFloaterPx = floater.px;
+    startFloaterPy = floater.py;
+
+    floater.element.style.transform = "scale(1.15) translateZ(35px)";
+
+    // Highlight the target position on the grid
+    const targetCell = cellsMap[`${floater.c}-${floater.r}`];
+    if (targetCell) {
+      targetCell.classList.add("lan-active-target");
+    }
+  });
+
+  floater.element.addEventListener("pointermove", (e) => {
+    if (!floater.isDragged || floater.isSnapped) return;
+
+    const rect = canvasEl.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+
+    const dx = e.clientX - startPointerX;
+    const dy = e.clientY - startPointerY;
+
+    // Convert pixel offset to percentage offset
+    const dxPct = (dx / rect.width) * 100;
+    const dyPct = (dy / rect.height) * 100;
+
+    let newX = startFloaterPx + dxPct;
+    let newY = startFloaterPy + dyPct;
+
+    // Clamp inside boundaries (0 to 100 minus width)
+    const sizePct = 100 / GRID_SIZE;
+    newX = Math.max(0, Math.min(100 - sizePct, newX));
+    newY = Math.max(0, Math.min(100 - sizePct, newY));
+
+    floater.px = newX;
+    floater.py = newY;
+
+    floater.element.style.left = `${newX}%`;
+    floater.element.style.top = `${newY}%`;
+
+    // Visual snap guidance: check if near target
+    const currentGridX = newX / sizePct;
+    const currentGridY = newY / sizePct;
+    const distToTarget = Math.hypot(currentGridX - floater.c, currentGridY - floater.r);
+
+    if (distToTarget < 1.2) {
+      floater.element.style.borderColor = "#74d643"; // turns green when in range
+      floater.element.style.boxShadow = "0 0 15px rgba(116, 214, 67, 0.8)";
+    } else {
+      floater.element.style.borderColor = "";
+      floater.element.style.boxShadow = "";
+    }
+  });
+
+  floater.element.addEventListener("pointerup", (e) => {
+    if (!floater.isDragged) return;
+    floater.isDragged = false;
+    floater.element.releasePointerCapture(e.pointerId);
+
+    floater.element.style.transform = "";
+
+    // Remove high-light target styling
+    const targetCell = cellsMap[`${floater.c}-${floater.r}`];
+    if (targetCell) {
+      targetCell.classList.remove("lan-active-target");
+    }
+
+    const sizePct = 100 / GRID_SIZE;
+    const currentGridX = floater.px / sizePct;
+    const currentGridY = floater.py / sizePct;
+    const distToTarget = Math.hypot(currentGridX - floater.c, currentGridY - floater.r);
+
+    if (distToTarget < 1.2) {
+      // Snap to correct target!
+      floater.isSnapped = true;
+      floater.px = floater.c * sizePct;
+      floater.py = floater.r * sizePct;
+      floater.element.style.left = `${floater.px}%`;
+      floater.element.style.top = `${floater.py}%`;
+      floater.element.style.borderColor = "";
+      floater.element.style.boxShadow = "";
+      floater.element.classList.add("snapped");
+      floater.element.style.cursor = "default";
+      floater.element.style.pointerEvents = "none";
+
+      // Ink the cell in the grid underneath
+      const cellKey = `${floater.c}-${floater.r}`;
+      const cell = cellsMap[cellKey];
+      if (cell) {
+        cell.classList.remove("lan-target-placeholder");
+        cell.classList.add("inked");
+      }
+
+      AudioSynth.playHotspot();
+      currentLanPlaced++;
+      updateHeader();
+
+      // Check if all 6 are placed
+      if (currentLanPlaced === 6) {
+        // Staggered remove/fade of floater borders and complete the stage
+        setTimeout(() => {
+          lanFloaters.forEach(f => {
+            f.element.style.transition = "opacity 0.6s ease";
+            f.element.style.opacity = "0";
+          });
+          setTimeout(() => {
+            lanFloaters.forEach(f => {
+              if (f.element) f.element.remove();
+            });
+            triggerVictory();
+          }, 600);
+        }, 800);
+      }
+    } else {
+      // Re-initialize random drift velocity so it doesn't stay stationary
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 0.08 + Math.random() * 0.06;
+      floater.vx = Math.cos(angle) * speed;
+      floater.vy = Math.sin(angle) * speed;
+    }
+  });
+
+  floater.element.addEventListener("pointercancel", (e) => {
+    if (!floater.isDragged) return;
+    floater.isDragged = false;
+    floater.element.style.transform = "";
+
+    // Remove high-light target styling
+    const targetCell = cellsMap[`${floater.c}-${floater.r}`];
+    if (targetCell) {
+      targetCell.classList.remove("lan-active-target");
+    }
+
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 0.08 + Math.random() * 0.06;
+    floater.vx = Math.cos(angle) * speed;
+    floater.vy = Math.sin(angle) * speed;
+  });
 }
 
 // ==========================================

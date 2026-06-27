@@ -143,11 +143,11 @@ html, body {
 .grid-paper-wrapper {
   position: relative;
   background-color: #000000;
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-  max-width: 95vw;
-  max-height: 80vh;
-  border-radius: 4px;
+  width: 100%;
+  height: 100%;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -156,15 +156,15 @@ html, body {
 }
 
 .grid-paper-wrapper.has-started {
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: transparent;
 }
 
 /* INTERACTION CANVAS */
 #interaction-canvas {
   position: relative;
   transform-style: preserve-3d;
-  width: calc(16 * var(--cell-size));
-  height: calc(16 * var(--cell-size));
+  width: 100%;
+  height: 100%;
 }
 
 /* GRID CELLS WITH 3D FLIP EFFECT */
@@ -733,4 +733,44 @@ html, body {
   bottom: 20%;
   font-size: clamp(24px, 3.5vw, 48px);
   letter-spacing: 0.5em;
+}
+
+/* Stage 5 - LAN Floating Squares & Target Placeholders */
+.lan-floater {
+  position: absolute;
+  width: 6.25%; /* 100 / 16 = 6.25% */
+  height: 6.25%;
+  background-color: var(--ink-color);
+  border: 1.5px solid #3c6ed4;
+  box-shadow: 0 4px 10px rgba(60, 110, 212, 0.4), 0 0 8px rgba(60, 110, 212, 0.3);
+  border-radius: 2px;
+  cursor: grab;
+  touch-action: none;
+  z-index: 20;
+  transform: translateZ(25px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lan-floater:active {
+  cursor: grabbing;
+  transform: scale(1.15) translateZ(35px) !important;
+  box-shadow: 0 10px 20px rgba(60, 110, 212, 0.6), 0 0 15px rgba(60, 110, 212, 0.5);
+  z-index: 21;
+}
+
+.lan-floater.snapped {
+  border: 1px solid var(--ink-color);
+  box-shadow: none;
+}
+
+.grid-cell.lan-target-placeholder {
+  border: 1.5px dashed rgba(60, 110, 212, 0.6) !important;
+  background-color: rgba(60, 110, 212, 0.05) !important;
+}
+
+.grid-cell.lan-target-placeholder.lan-active-target {
+  border: 2px solid #3c6ed4 !important;
+  background-color: rgba(60, 110, 212, 0.25) !important;
+  box-shadow: 0 0 15px rgba(60, 110, 212, 0.6);
+  z-index: 10;
 }

@@ -8,15 +8,11 @@ const CONFIG = {
 const GALLERY_IMAGES = [
   'Assets/Imagen caja 1.png',
   'Assets/Imagen tablero 1.png',
-  'Assets/Cuadriculas 1.png',
-  'Assets/ruleta 1..png',
-  'Assets/Imagen cartas 1.png',
+  'Assets/piezas acrilico.png',
   'Assets/piezas especiales 1.png',
-  'Assets/foto8.jpg',
-  'Assets/foto9.jpg',
-  'Assets/foto10.jpg',
-  'Assets/foto11.jpg',
-  'Assets/foto12.jpg'
+  'Assets/ruleta 1..png',
+  'Assets/Cuadriculas 1.png',
+  'Assets/Imagen cartas 1.png'
 ];
 
 const HERO_DOTS = [
@@ -42,14 +38,10 @@ const DESC_DOTS = [
 ];
 
 const FOOTER_DOTS = [
-  { id: 'f1', col: 0, row: 0, ox: 0.30, oy: 0.28 },
-  { id: 'f2', col: 1, row: 0, ox: 0.42, oy: 0.42 },
-  { id: 'f3', col: 2, row: 0, ox: 0.35, oy: 0.26 },
-  { id: 'f4', col: 3, row: 0, ox: 0.55, oy: 0.28 },
-  { id: 'f5', col: 0, row: 2, ox: 0.45, oy: 0.55 },
-  { id: 'f6', col: 1, row: 2, ox: 0.55, oy: 0.52 },
-  { id: 'f7', col: 2, row: 2, ox: 0.38, oy: 0.68 },
-  { id: 'f8', col: 3, row: 2, ox: 0.62, oy: 0.54 }
+  { id: 'f5', col: 0, row: 2, ox: 0.45, oy: 0.70 },
+  { id: 'f6', col: 1, row: 2, ox: 0.55, oy: 0.67 },
+  { id: 'f7', col: 2, row: 2, ox: 0.38, oy: 0.83 },
+  { id: 'f8', col: 3, row: 2, ox: 0.62, oy: 0.69 }
 ];
 
 const DESC_TEXTS = [
@@ -131,7 +123,7 @@ function setBox(el, left, top, width, height) {
 }
 
 function placeDots(items, metrics) {
-  const size = Math.floor(metrics.cell * 0.13);
+  const size = Math.floor(metrics.cell * 0.24);
 
   items.forEach(({ id, col, row, ox, oy }) => {
     const el = document.getElementById(id);
@@ -184,47 +176,9 @@ function layoutHero(metrics) {
   title.style.fontSize = `${titleSize}px`;
   title.style.left = `${metrics.offX}px`;
   title.style.width = `${metrics.gridW}px`;
-  title.style.top = `${Math.floor(metrics.cy(1) + metrics.cell * 0.20)}px`;
-
-  const sqSize = Math.floor(metrics.cell * 0.17);
-  const titleTop = parseInt(title.style.top, 10) || metrics.cy(1);
-  const titleHeight = title.offsetHeight || Math.floor(metrics.cell * 0.55);
-
-  const squares = [
-    {
-      id: 'sq1',
-      left: metrics.offX - 159,
-      top: titleTop + titleHeight * 0.12
-    },
-    {
-      id: 'sq2',
-      left: metrics.offX + metrics.gridW * 0.320 - sqSize * 0.05,
-      top: titleTop + titleHeight * 0.64 - sqSize * 0.10
-    },
-    {
-      id: 'sq3',
-      left: metrics.offX + metrics.gridW * 0.532 - sqSize * 0.06,
-      top: titleTop + titleHeight * 0.13 - sqSize * 0.09
-    },
-    {
-      id: 'sq4',
-      left: metrics.offX + metrics.gridW * 0.94 - sqSize * 0.08,
-      top: titleTop + titleHeight * 0.09 - sqSize * 0.10
-    }
-  ];
-
-  squares.forEach(({ id, left, top }) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-
-    setBox(
-      el,
-      Math.floor(left),
-      Math.floor(top),
-      sqSize,
-      sqSize
-    );
-  });
+  
+  const titleTop = Math.floor(metrics.cy(1) + metrics.cell * 0.20);
+  title.style.top = `${titleTop}px`;
 }
 
 function layoutDescriptionTexts(metrics) {
@@ -272,27 +226,12 @@ function layoutBlocksAndTexts(metrics) {
 }
 
 function layoutSection6(metrics) {
-  const title = document.getElementById('s6-title');
-  const arrow = document.getElementById('s6-arrow');
-
-  if (title) {
-    title.style.fontSize = `${Math.floor(metrics.cell * 0.28)}px`;
-    title.style.left = `${metrics.offX}px`;
-    title.style.top = `${metrics.cy(1)}px`;
-    title.style.width = `${metrics.gridW}px`;
-    title.style.height = `${metrics.cell}px`;
-  }
-
-  if (arrow) {
-    arrow.style.left = `${metrics.offX}px`;
-    arrow.style.top = `${Math.floor(metrics.cy(1) + metrics.cell + 12)}px`;
-    arrow.style.width = `${metrics.gridW}px`;
-  }
+  // Discontinuado: El diseño es manejado estática y responsivamente por flexbox en CSS
 }
 
 function layoutSeparators(metrics) {
   const separators = document.querySelectorAll('.sep-row');
-  const dotSize = Math.floor(metrics.cell * 0.13);
+  const dotSize = Math.floor(metrics.cell * 0.24);
 
   separators.forEach(sep => {
     sep.style.height = `${metrics.cell}px`;
@@ -415,6 +354,20 @@ function renderGallery() {
 
       const canvasContainer = document.createElement('div');
       canvasContainer.id = 'canvas-pieces3d';
+      slide.appendChild(canvasContainer);
+      track.appendChild(slide);
+      return;
+    }
+
+    if (src === 'Assets/piezas acrilico.png') {
+      slide.className = 'gallery-slide acrylic-3d-slide';
+      slide.id = 'acrylic-3d-slide';
+      slide.setAttribute('tabindex', '0');
+      slide.setAttribute('role', 'button');
+      slide.setAttribute('aria-label', `Ver modelo 3D de las piezas de acrílico de cerca`);
+
+      const canvasContainer = document.createElement('div');
+      canvasContainer.id = 'canvas-acrylic3d';
       slide.appendChild(canvasContainer);
       track.appendChild(slide);
       return;
@@ -638,7 +591,8 @@ function setupLightbox() {
       'lightbox-cards3d-container',
       'lightbox-ruleta3d-container',
       'lightbox-cuadriculas3d-container',
-      'lightbox-pieces3d-container'
+      'lightbox-pieces3d-container',
+      'lightbox-acrylic3d-container'
     ];
     ids.forEach(id => {
       const el = document.getElementById(id);
@@ -766,6 +720,26 @@ function setupLightbox() {
     }
   }
 
+  function openAcrylic3DLightbox() {
+    hideAll3DContainers();
+    const containerAcrylic3d = document.getElementById('lightbox-acrylic3d-container');
+    const canvasAcrylic3d = document.getElementById('canvas-acrylic3d');
+    if (!containerAcrylic3d || !canvasAcrylic3d) return;
+
+    lightboxImage.style.display = 'none';
+    containerAcrylic3d.style.display = 'block';
+    containerAcrylic3d.appendChild(canvasAcrylic3d);
+
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    if (window.Acrylic3D) {
+      window.Acrylic3D.setMode(true);
+      window.Acrylic3D.resize();
+    }
+  }
+
   function closeLightbox() {
     lightbox.classList.remove('is-open');
     lightbox.setAttribute('aria-hidden', 'true');
@@ -843,6 +817,18 @@ function setupLightbox() {
         window.Pieces3D.resize();
       }
     }
+
+    const containerAcrylic3d = document.getElementById('lightbox-acrylic3d-container');
+    const canvasAcrylic3d = document.getElementById('canvas-acrylic3d');
+    const slideAcrylic3d = document.getElementById('acrylic-3d-slide');
+    if (containerAcrylic3d && canvasAcrylic3d && slideAcrylic3d && containerAcrylic3d.style.display === 'block') {
+      slideAcrylic3d.appendChild(canvasAcrylic3d);
+      containerAcrylic3d.style.display = 'none';
+      if (window.Acrylic3D) {
+        window.Acrylic3D.setMode(false);
+        window.Acrylic3D.resize();
+      }
+    }
   }
 
   track.addEventListener('click', event => {
@@ -879,6 +865,11 @@ function setupLightbox() {
       return;
     }
 
+    if (slide.id === 'acrylic-3d-slide') {
+      openAcrylic3DLightbox();
+      return;
+    }
+
     if (!slide.dataset.full) return;
     const img = slide.querySelector('img');
     openLightbox(slide.dataset.full, img?.alt || 'Vista ampliada');
@@ -902,6 +893,8 @@ function setupLightbox() {
         openCuadriculas3DLightbox();
       } else if (slide.id === 'pieces-3d-slide') {
         openPieces3DLightbox();
+      } else if (slide.id === 'acrylic-3d-slide') {
+        openAcrylic3DLightbox();
       } else if (slide.dataset.full) {
         const img = slide.querySelector('img');
         openLightbox(slide.dataset.full, img?.alt || 'Vista ampliada');
@@ -919,29 +912,6 @@ function setupLightbox() {
   });
 }
 
-function bindHeroSquareHover() {
-  const pairs = [
-    { letterId: 'lc', squareId: 'sq1' },
-    { letterId: 'lr', squareId: 'sq2' },
-    { letterId: 'lcu', squareId: 'sq3' },
-    { letterId: 'ln', squareId: 'sq4' }
-  ];
-
-  pairs.forEach(({ letterId, squareId }) => {
-    const letter = document.getElementById(letterId);
-    const square = document.getElementById(squareId);
-
-    if (!letter || !square) return;
-
-    letter.addEventListener('mouseenter', () => {
-      square.style.opacity = '0';
-    });
-
-    letter.addEventListener('mouseleave', () => {
-      square.style.opacity = '1';
-    });
-  });
-}
 
 function setupMobileCards() {
   document.addEventListener('click', event => {
@@ -980,12 +950,15 @@ function init() {
     window.Pieces3D.init();
   }
 
+  if (window.Acrylic3D && window.Acrylic3D.init) {
+    window.Acrylic3D.init();
+  }
+
   setupCursor();
   setupGalleryControls();
   setupLightbox();
   setupSectionObserver();
   setupScrollAnimation();
-  bindHeroSquareHover();
   setupMobileCards();
   window.addEventListener('resize', layout);
   updateScrollProgress(false);

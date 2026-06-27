@@ -67,8 +67,8 @@
     dirLight1.shadow.bias = -0.0003;
     scene.add(dirLight1);
 
-    const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
-    dirLight2.position.set(-2, 2, -1);
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight2.position.set(-2, 2, -3);
     scene.add(dirLight2);
 
     // 6. Grupo principal
@@ -382,14 +382,12 @@
         rotateBtn.classList.toggle('is-active', autoRotate);
       }
 
-      // Resetear al cerrar el lightbox
-      if (!isLarge) {
-        isSpinning = false;
-        snapTarget = null;
-        wheelGroup.rotation.z = 0;
-        ruletaContainer.rotation.set(0, 0, 0);
-        camera.position.set(0, 0, 2.5);
-      }
+      // Resetear rotación, velocidad de giro y cámara al abrir o cerrar
+      isSpinning = false;
+      snapTarget = null;
+      wheelGroup.rotation.z = 0;
+      ruletaContainer.rotation.set(0, 0, 0);
+      camera.position.set(0, 0, 2.5);
     },
     resize: function () {
       onWindowResize();
